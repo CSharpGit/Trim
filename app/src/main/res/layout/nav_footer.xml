@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+    android:gravity="center"
+android:layout_height="60dp"
+android:background="#ffffff"
+android:orientation="vertical">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="5dp"
+    android:orientation="horizontal">
+    <LinearLayout
+        android:id="@+id/menu_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/menu_img_1"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/home_green"/>
+        <TextView
+            android:id="@+id/menu_text_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="@dimen/textSmall"
+            android:textColor="@color/textSelected"
+            android:text="首页"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/menu_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/menu_img_2"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/img_gray"/>
+        <TextView
+            android:id="@+id/menu_text_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="@dimen/textSmall"
+            android:textColor="@color/textGray"
+            android:text="案例"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/menu_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/menu_img_3"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/reserve_gray"/>
+        <TextView
+            android:id="@+id/menu_text_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="@dimen/textSmall"
+            android:textColor="@color/textGray"
+            android:text="预约"/>
+    </LinearLayout>
+</LinearLayout>
+</LinearLayout>
