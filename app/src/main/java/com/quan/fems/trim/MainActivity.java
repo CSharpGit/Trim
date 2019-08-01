@@ -33,6 +33,8 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        mTab=1;
+        tabActivity(1);
         initData();
         initEvent();
     }
@@ -42,8 +44,6 @@ public class MainActivity extends BaseActivity {
         titleName=findViewById(R.id.title_name);
         mFragmentManager = getSupportFragmentManager();
         mFrameLayout = findViewById(R.id.frame_view);
-        mHomeFragment = new HomeFragment();
-        mFragmentManager.beginTransaction().add(R.id.frame_view,mHomeFragment).commit();
         menu_img_1=findViewById(R.id.menu_img_1);
         menu_img_2=findViewById(R.id.menu_img_2);
         menu_img_3=findViewById(R.id.menu_img_3);

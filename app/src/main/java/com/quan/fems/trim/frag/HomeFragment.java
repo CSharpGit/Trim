@@ -1,5 +1,6 @@
 package com.quan.fems.trim.frag;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.quan.fems.trim.R;
+import com.quan.fems.trim.activity.CalculatorActivity;
 import com.quan.fems.trim.adapter.HomeDesignerAdapter;
 import com.quan.fems.trim.adapter.HomeIconAdapter;
 import com.quan.fems.trim.adapter.HomeTrimSceneAdapter;
@@ -44,8 +46,10 @@ public class HomeFragment extends BaseFragment{
         view = inflater.inflate(R.layout.fragment_home,container,false);
         initView();
         initData();
+        initEvent();
         return view;
     }
+
     private void initView(){
         mViewPager = view.findViewById(R.id.viewPager);
         slide = view.findViewById(R.id.banner_slide);
@@ -56,6 +60,21 @@ public class HomeFragment extends BaseFragment{
 
     private void initData(){
         initBannerData();
+    }
+
+    private void initEvent() {
+        mHomeIconAdapter.setOnItemClickLitener(new HomeIconAdapter.OnItemClickLitener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent =new Intent(getActivity(),CalculatorActivity.class);
+                getActivity().startActivity(intent);
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+
+            }
+        });
     }
 
     private void initBannerData() {
@@ -89,7 +108,7 @@ public class HomeFragment extends BaseFragment{
         iListData.add("图标1");
         iListData.add("图标1");
         iListData.add("图标1");
-        mHomeIconAdapter=new HomeIconAdapter(getActivity(),iListData);
+        mHomeIconAdapter=new HomeIconAdapter(iListData);
         StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(4,StaggeredGridLayoutManager.VERTICAL);
         mHomeIconRecyclerView.setLayoutManager(staggered);
         mHomeIconRecyclerView.setAdapter(mHomeIconAdapter);
