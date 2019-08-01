@@ -13,7 +13,7 @@ public class ReserveFragment extends BaseFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        view = inflater.inflate(R.layout.nav_footer,container,false);
+        view = inflater.inflate(R.layout.fragment_reserve,container,false);
         initView();
         initData();
         return view;

@@ -16,6 +16,8 @@ import com.quan.fems.trim.frag.ReserveFragment;
 import com.quan.fems.trim.frag.SceneFragment;
 
 public class MainActivity extends BaseActivity {
+    private ImageView backView;
+    private TextView titleName;
     private FrameLayout mFrameLayout;
     private FragmentTransaction mFragmentTransaction = null;
     private FragmentManager mFragmentManager = null;
@@ -36,6 +38,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initView() {
+        backView=findViewById(R.id.back_view);
+        titleName=findViewById(R.id.title_name);
         mFragmentManager = getSupportFragmentManager();
         mFrameLayout = findViewById(R.id.frame_view);
         mHomeFragment = new HomeFragment();
@@ -52,6 +56,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initData() {
+        backView.setVisibility(View.GONE);
+        titleName.setText("识尚装饰");
     }
     private void initEvent() {
         menu_1.setOnClickListener(new OnSingleClickListener() {
