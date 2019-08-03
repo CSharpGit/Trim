@@ -1,6 +1,7 @@
 package com.quan.fems.trim.frag;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 
 import com.quan.fems.trim.R;
 import com.quan.fems.trim.activity.CalculatorActivity;
+import com.quan.fems.trim.activity.ReserveActivity;
 import com.quan.fems.trim.adapter.HomeDesignerAdapter;
 import com.quan.fems.trim.adapter.HomeIconAdapter;
 import com.quan.fems.trim.adapter.HomeTrimSceneAdapter;
@@ -66,8 +68,21 @@ public class HomeFragment extends BaseFragment{
         mHomeIconAdapter.setOnItemClickLitener(new HomeIconAdapter.OnItemClickLitener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent =new Intent(getActivity(),CalculatorActivity.class);
-                getActivity().startActivity(intent);
+                switch (position){
+                    case 0:
+                        Intent calIntent =new Intent(getActivity(),CalculatorActivity.class);
+                        getActivity().startActivity(calIntent);
+                        break;
+                    case 1:
+                        callPhone("18856235864");
+                        break;
+                    case 2:
+                        Intent resIntent =new Intent(getActivity(),ReserveActivity.class);
+                        getActivity().startActivity(resIntent);
+                        break;
+                    case 3:
+                        break;
+                }
             }
 
             @Override
@@ -75,6 +90,13 @@ public class HomeFragment extends BaseFragment{
 
             }
         });
+    }
+
+    public void callPhone(String str) {
+        Intent intent=new Intent();
+        intent.setAction(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:" + str));
+        startActivity(intent);
     }
 
     private void initBannerData() {

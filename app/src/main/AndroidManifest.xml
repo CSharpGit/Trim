@@ -3,6 +3,7 @@
     package="com.quan.fems.trim">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
     <application
         android:name=".UIApplication"
         android:allowBackup="true"
@@ -19,5 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.CalculatorActivity"/>
+        <activity android:name=".PickerViewDemo"/>
+        <activity android:name=".activity.ReserveActivity"/>
     </application>
 </manifest>
