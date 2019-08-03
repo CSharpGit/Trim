@@ -13,9 +13,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view_icon"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="wrap_content"
             android:background="@color/white">
-
         </android.support.v7.widget.RecyclerView>
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,6 +25,7 @@
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp">
                 <TextView
@@ -63,7 +63,9 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view_designer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+                android:layout_height="wrap_content">
+
+            </android.support.v7.widget.RecyclerView>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -74,6 +76,7 @@
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp">
                 <TextView

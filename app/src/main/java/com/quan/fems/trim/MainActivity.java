@@ -16,6 +16,8 @@ import com.quan.fems.trim.frag.ReserveFragment;
 import com.quan.fems.trim.frag.SceneFragment;
 
 public class MainActivity extends BaseActivity {
+    private ImageView backView;
+    private TextView titleName;
     private FrameLayout mFrameLayout;
     private FragmentTransaction mFragmentTransaction = null;
     private FragmentManager mFragmentManager = null;
@@ -31,15 +33,17 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        mTab=1;
+        tabActivity(1);
         initData();
         initEvent();
     }
 
     private void initView() {
+        backView=findViewById(R.id.back_view);
+        titleName=findViewById(R.id.title_name);
         mFragmentManager = getSupportFragmentManager();
         mFrameLayout = findViewById(R.id.frame_view);
-        mHomeFragment = new HomeFragment();
-        mFragmentManager.beginTransaction().add(R.id.frame_view,mHomeFragment).commit();
         menu_img_1=findViewById(R.id.menu_img_1);
         menu_img_2=findViewById(R.id.menu_img_2);
         menu_img_3=findViewById(R.id.menu_img_3);
@@ -52,6 +56,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initData() {
+        backView.setVisibility(View.GONE);
+        titleName.setText("识尚装饰");
     }
     private void initEvent() {
         menu_1.setOnClickListener(new OnSingleClickListener() {
