@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.quan.fems.trim.R;
 import com.quan.fems.trim.activity.CalculatorActivity;
+import com.quan.fems.trim.activity.DesignerDetailActivity;
 import com.quan.fems.trim.activity.DesignerListActivity;
 import com.quan.fems.trim.activity.ReserveActivity;
 import com.quan.fems.trim.activity.TrimSceneActivity;
@@ -92,6 +93,18 @@ public class HomeFragment extends BaseFragment{
                         getActivity().startActivity(designerIntent);
                         break;
                 }
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+
+            }
+        });
+        mHomeDesignerAdapter.setOnItemClickListener(new HomeDesignerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent =new Intent(getActivity(),DesignerDetailActivity.class);
+                getActivity().startActivity(intent);
             }
 
             @Override

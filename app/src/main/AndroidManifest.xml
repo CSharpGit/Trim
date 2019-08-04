@@ -24,5 +24,6 @@
         <activity android:name=".activity.ReserveActivity"/>
         <activity android:name=".activity.DesignerListActivity"/>
         <activity android:name=".activity.TrimSceneActivity"/>
+        <activity android:name=".activity.DesignerDetailActivity"/>
     </application>
 </manifest>
