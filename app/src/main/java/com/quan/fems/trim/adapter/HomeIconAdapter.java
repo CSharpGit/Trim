@@ -14,13 +14,13 @@ import java.util.List;
 
 public class HomeIconAdapter extends RecyclerView.Adapter<HomeIconAdapter.ViewHolder> {
     private List<String> list;
-    private OnItemClickLitener mOnItemClickLitener;
+    private OnItemClickListener mOnItemClickListener;
     public HomeIconAdapter(List<String> list) {
         this.list = list;
     }
-    public void setOnItemClickLitener(OnItemClickLitener mOnItemClickLitener)
+    public void setOnItemClickListener(OnItemClickListener mOnItemClickListener)
     {
-        this.mOnItemClickLitener = mOnItemClickLitener;
+        this.mOnItemClickListener = mOnItemClickListener;
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -32,17 +32,17 @@ public class HomeIconAdapter extends RecyclerView.Adapter<HomeIconAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         holder.mText.setText(list.get(position));
-        if(mOnItemClickLitener != null){
+        if(mOnItemClickListener != null){
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnItemClickLitener.onItemClick(v,position);
+                    mOnItemClickListener.onItemClick(v,position);
                 }
             });
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    mOnItemClickLitener.onItemClick(v,position);
+                    mOnItemClickListener.onItemClick(v,position);
                     return false;
                 }
             });
@@ -60,7 +60,7 @@ public class HomeIconAdapter extends RecyclerView.Adapter<HomeIconAdapter.ViewHo
             mText = itemView.findViewById(R.id.name_view);
         }
     }
-    public interface OnItemClickLitener
+    public interface OnItemClickListener
     {
         void onItemClick(View view, int position);
         void onItemLongClick(View view , int position);

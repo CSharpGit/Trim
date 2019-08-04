@@ -41,7 +41,7 @@ public class SceneFragment extends BaseFragment{
     private void initRecyclerView() {
         mRecyclerView=view.findViewById(R.id.recycler_view);
         listData=new ArrayList<>();
-        mAdapter=new TrimSceneAdapter(getActivity(),listData);
+        mAdapter=new TrimSceneAdapter(listData);
         StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(staggered);
         mRecyclerView.setAdapter(mAdapter);

@@ -5,30 +5,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.quan.fems.trim.R;
 
 import java.util.List;
 
-public class HomeDesignerAdapter extends RecyclerView.Adapter<HomeDesignerAdapter.ViewHolder> {
+public class DesignerListAdapter extends RecyclerView.Adapter<DesignerListAdapter.ViewHolder> {
     private List<String> list;
-    private OnItemClickListener mOnItemClickListener;
-    public HomeDesignerAdapter(List<String> list) {
+    private DesignerListAdapter.OnItemClickListener mOnItemClickListener;
+    public DesignerListAdapter(List<String> list) {
         this.list = list;
     }
-    public void setOnItemClickListener(OnItemClickListener mOnItemClickListener)
+    public void setOnItemClickListener(DesignerListAdapter.OnItemClickListener mOnItemClickListener)
     {
         this.mOnItemClickListener = mOnItemClickListener;
     }
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.designer_item, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
+    public DesignerListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.designer_list_item, parent, false);
+        DesignerListAdapter.ViewHolder viewHolder = new DesignerListAdapter.ViewHolder(view);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(DesignerListAdapter.ViewHolder holder, final int position) {
         holder.mText.setText(list.get(position));
         if(mOnItemClickListener != null){
             holder.itemView.setOnClickListener(new View.OnClickListener() {
