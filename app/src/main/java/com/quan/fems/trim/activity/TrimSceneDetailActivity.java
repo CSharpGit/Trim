@@ -9,23 +9,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.quan.fems.trim.R;
-import com.quan.fems.trim.adapter.DesignerListAdapter;
+import com.quan.fems.trim.adapter.TrimeSceneDetailAdapter;
 import com.quan.fems.trim.base.BaseActivity;
+import com.quan.fems.trim.base.OnSingleClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DesignerListActivity extends BaseActivity {
+public class TrimSceneDetailActivity extends BaseActivity {
     private ImageView backView;
-    private TextView titleName;
+    private TextView titleName,toCalculator,toReserve;
     private RecyclerView mRecyclerView;
-    private DesignerListAdapter mAdapter;
+    private TrimeSceneDetailAdapter mAdapter;
     private List<String> listData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_designer_list);
+        setContentView(R.layout.trim_scene_detail);
         initView();
         initData();
         initEvent();
@@ -34,17 +35,19 @@ public class DesignerListActivity extends BaseActivity {
     private void initView() {
         backView = findViewById(R.id.back_view);
         titleName = findViewById(R.id.title_name);
+        toCalculator=findViewById(R.id.to_calculator);
+        toReserve=findViewById(R.id.to_reserve);
         initRecyclerView();
     }
 
     private void initRecyclerView() {
         mRecyclerView=findViewById(R.id.recycler_view);
         listData=new ArrayList<>();
-        listData.add("李冰");
-        listData.add("李冰");
-        listData.add("李冰");
-        listData.add("李冰");
-        mAdapter=new DesignerListAdapter(listData);
+        listData.add("客厅");
+        listData.add("厨房");
+        listData.add("书房");
+        listData.add("主卧");
+        mAdapter=new TrimeSceneDetailAdapter(listData);
         StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(staggered);
         mRecyclerView.setAdapter(mAdapter);
@@ -58,19 +61,21 @@ public class DesignerListActivity extends BaseActivity {
         backView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DesignerListActivity.this.finish();
+                TrimSceneDetailActivity.this.finish();
             }
         });
-        mAdapter.setOnItemClickListener(new DesignerListAdapter.OnItemClickListener() {
+        toCalculator.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onItemClick(View view, int position) {
-                Intent intent=new Intent(DesignerListActivity.this,DesignerDetailActivity.class);
-                DesignerListActivity.this.startActivity(intent);
+            protected void onSingleClick(View v) {
+                Intent intent=new Intent(TrimSceneDetailActivity.this,CalculatorActivity.class);
+                TrimSceneDetailActivity.this.startActivity(intent);
             }
-
+        });
+        toReserve.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onItemLongClick(View view, int position) {
-
+            protected void onSingleClick(View v) {
+                Intent intent=new Intent(TrimSceneDetailActivity.this,ReserveActivity.class);
+                TrimSceneDetailActivity.this.startActivity(intent);
             }
         });
     }

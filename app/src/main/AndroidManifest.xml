@@ -25,5 +25,6 @@
         <activity android:name=".activity.DesignerListActivity"/>
         <activity android:name=".activity.TrimSceneActivity"/>
         <activity android:name=".activity.DesignerDetailActivity"/>
+        <activity android:name=".activity.TrimSceneDetailActivity"/>
     </application>
 </manifest>
