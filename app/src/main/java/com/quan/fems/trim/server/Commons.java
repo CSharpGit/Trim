@@ -10,6 +10,6 @@ public class Commons {
     public static final String ASSETS = "assets://images/";
     //首页轮播图
     public static final String BANNER =WEB_URL+"home/banner";
-    //登录
-    public static final String LOGIN =  WEB_URL + "api/user/login";
+    //首页图标
+    public static final String ICON =  WEB_URL + "home/icon";
 }

@@ -55,9 +55,8 @@ public class SlideAdapter extends PagerAdapter {
     }
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        SlideBean bean = (SlideBean)listData.get(position);
+        SlideBean bean = listData.get(position);
         ImageView img = new ImageView(mContext);
-        System.out.println("图片路径："+Commons.WEB_URL+Commons.IMG_DIR+bean.imgurl);
         ImageLoader.getInstance().displayImage(Commons.WEB_URL+Commons.IMG_DIR+bean.imgurl, img, options, animateFirstListener);
         img.setScaleType(ImageView.ScaleType.CENTER_CROP);
         container.addView(img);

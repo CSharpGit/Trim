@@ -1,21 +1,34 @@
 package com.quan.fems.trim.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.quan.fems.trim.R;
+import com.quan.fems.trim.bean.HomeIconBean;
+import com.quan.fems.trim.server.Commons;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class HomeIconAdapter extends RecyclerView.Adapter<HomeIconAdapter.ViewHolder> {
-    private List<String> list;
+    protected DisplayImageOptions options;
+    protected ImageLoadingListener mImageLoadingListener = new AnimateFirstDisplayListener();
+    private List<HomeIconBean> list;
     private OnItemClickListener mOnItemClickListener;
-    public HomeIconAdapter(List<String> list) {
+    public HomeIconAdapter(List<HomeIconBean> list) {
         this.list = list;
     }
     public void setOnItemClickListener(OnItemClickListener mOnItemClickListener)
@@ -31,7 +44,8 @@ public class HomeIconAdapter extends RecyclerView.Adapter<HomeIconAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.mText.setText(list.get(position));
+        holder.mText.setText(list.get(position).titleName);
+        ImageLoader.getInstance().displayImage(Commons.WEB_URL+Commons.IMG_DIR+list.get(position).imgurl,holder.imageView,options,mImageLoadingListener);
         if(mOnItemClickListener != null){
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -55,14 +69,31 @@ public class HomeIconAdapter extends RecyclerView.Adapter<HomeIconAdapter.ViewHo
     }
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView mText;
+        ImageView imageView;
         ViewHolder(View itemView) {
             super(itemView);
             mText = itemView.findViewById(R.id.name_view);
+            imageView=itemView.findViewById(R.id.img_view);
         }
     }
     public interface OnItemClickListener
     {
         void onItemClick(View view, int position);
         void onItemLongClick(View view , int position);
+    }
+
+    private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
+        static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
+        @Override
+        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            if (loadedImage != null) {
+                ImageView imageView = (ImageView) view;
+                boolean firstDisplay = !displayedImages.contains(imageUri);
+                if (firstDisplay) {
+                    FadeInBitmapDisplayer.animate(imageView, 500);
+                    displayedImages.add(imageUri);
+                }
+            }
+        }
     }
 }

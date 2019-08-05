@@ -27,6 +27,7 @@ import com.quan.fems.trim.adapter.HomeTrimSceneAdapter;
 import com.quan.fems.trim.adapter.SlideAdapter;
 import com.quan.fems.trim.base.BaseFragment;
 import com.quan.fems.trim.base.OnSingleClickListener;
+import com.quan.fems.trim.bean.HomeIconBean;
 import com.quan.fems.trim.bean.SlideBean;
 import com.quan.fems.trim.server.AsyncHttpCient;
 import com.quan.fems.trim.server.Commons;
@@ -46,7 +47,7 @@ public class HomeFragment extends BaseFragment{
     private View view = null;
     private ConstraintLayout toDesignerList,toTrimScene;
     private RecyclerView mHomeIconRecyclerView,mHomeDesignerRecyclerView,mHomeTrimSceneRecyclerView;
-    private List<String> iListData,dListData,tListData;
+    private List<String> dListData,tListData;
     private HomeIconAdapter mHomeIconAdapter;
     private HomeDesignerAdapter mHomeDesignerAdapter;
     private HomeTrimSceneAdapter mHomeTrimSceneAdapter;
@@ -57,6 +58,7 @@ public class HomeFragment extends BaseFragment{
     private ScheduledExecutorService scheduledExecutorService;
 
     private List<SlideBean> bannerListBean;
+    private List<HomeIconBean> iconListBean;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,16 +75,49 @@ public class HomeFragment extends BaseFragment{
         slide = view.findViewById(R.id.banner_slide);
         toDesignerList=view.findViewById(R.id.to_designer_list);
         toTrimScene=view.findViewById(R.id.to_trim_scene);
-        bannerListBean =new ArrayList<SlideBean>();
         initIconRecyclerView();
         initDesignerRecyclerView();
         initTrimSceneRecyclerView();
     }
 
     private void initData(){
-        //initBannerData();
+        bannerListBean =new ArrayList<>();
+        slide_list = new ImageView[4];
         loadBannerData();
+        loadIconData();
     }
+
+    private void loadIconData() {
+        AsyncHttpCient hndl = new AsyncHttpCient();
+        HttpParam prm = new HttpParam();
+        prm.httpListener = iconHttpListener;
+        prm.url = Commons.ICON;
+        hndl.execute(prm);
+    }
+
+    private HttpListener iconHttpListener = new HttpListener() {
+        @Override
+        public void onPostData(String data) {
+            try {
+                JSONObject jsn = new JSONObject(data);
+                iconListBean.clear();
+                if(jsn.getInt("errcode")==0){
+                    JSONArray dd = jsn.getJSONArray("data");
+                    for (int i=0;i<dd.length();i++){
+                        JSONObject jsnList=dd.getJSONObject(i);
+                        HomeIconBean hib = new HomeIconBean();
+                        hib.id=jsnList.getInt("_id");
+                        hib.imgurl=jsnList.getString("img");
+                        hib.titleName=jsnList.getString("titleName");
+                        iconListBean.add(hib);
+                    }
+                    mHomeIconAdapter.notifyDataSetChanged();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     private void initEvent() {
         mHomeIconAdapter.setOnItemClickListener(new HomeIconAdapter.OnItemClickListener() {
@@ -173,7 +208,6 @@ public class HomeFragment extends BaseFragment{
                 JSONObject jsn = new JSONObject(data);
                 bannerListBean.clear();
                 if(jsn.getInt("errcode")==0){
-                    System.out.println(data);
                     JSONArray dd = jsn.getJSONArray("data");
                     for (int i=0;i<dd.length();i++){
                         JSONObject jsnList=dd.getJSONObject(i);
@@ -204,38 +238,10 @@ public class HomeFragment extends BaseFragment{
         }
     };
 
-    private void initBannerData() {
-        ArrayList<SlideBean> lsts = new ArrayList<SlideBean>();
-        slide_list = new ImageView[4];
-        for (int i=0;i<4;i++){
-            SlideBean sb = new SlideBean();
-            sb.id=1;
-            sb.imgurl="banner.png";
-            lsts.add(sb);
-            ImageView iView = new ImageView(getActivity());
-            //点大小
-            iView.setLayoutParams(new ViewGroup.LayoutParams(20,20));
-            slide_list[i] = iView;
-            if (i == 0) {
-                slide_list[i].setBackgroundResource(R.drawable.slide_2);
-            }else {
-                slide_list[i].setBackgroundResource(R.drawable.slide_1);
-            }
-            slide.addView(slide_list[i]);
-        }
-        SlideAdapter sdp = new SlideAdapter(getActivity(),lsts);
-        mViewPager.setAdapter(sdp);
-        mViewPager.addOnPageChangeListener(new MyPageChangeListener());
-    }
-
     private void initIconRecyclerView() {
         mHomeIconRecyclerView=view.findViewById(R.id.recycler_view_icon);
-        iListData=new ArrayList<>();
-        iListData.add("计算器");
-        iListData.add("咨询热线");
-        iListData.add("免费设计");
-        iListData.add("设计师");
-        mHomeIconAdapter=new HomeIconAdapter(iListData);
+        iconListBean =new ArrayList<>();
+        mHomeIconAdapter=new HomeIconAdapter(iconListBean);
         StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(4,StaggeredGridLayoutManager.VERTICAL);
         mHomeIconRecyclerView.setLayoutManager(staggered);
         mHomeIconRecyclerView.setAdapter(mHomeIconAdapter);
