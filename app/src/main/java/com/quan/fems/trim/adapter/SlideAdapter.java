@@ -16,6 +16,7 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.quan.fems.trim.R;
 import com.quan.fems.trim.bean.SlideBean;
+import com.quan.fems.trim.server.Commons;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,10 +25,10 @@ import java.util.List;
 
 public class SlideAdapter extends PagerAdapter {
     protected ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
-    private ArrayList<?> listData;
+    private List<SlideBean> listData;
     private Context mContext;
     protected DisplayImageOptions options;
-    public SlideAdapter(Context context, ArrayList<?> listData){
+    public SlideAdapter(Context context, List<SlideBean> listData){
         this.listData=listData;
         this.mContext =context;
         options = new DisplayImageOptions.Builder()
@@ -56,7 +57,8 @@ public class SlideAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         SlideBean bean = (SlideBean)listData.get(position);
         ImageView img = new ImageView(mContext);
-        ImageLoader.getInstance().displayImage("assets://"+bean.imgurl, img, options, animateFirstListener);
+        System.out.println("图片路径："+Commons.WEB_URL+Commons.IMG_DIR+bean.imgurl);
+        ImageLoader.getInstance().displayImage(Commons.WEB_URL+Commons.IMG_DIR+bean.imgurl, img, options, animateFirstListener);
         img.setScaleType(ImageView.ScaleType.CENTER_CROP);
         container.addView(img);
         return img;

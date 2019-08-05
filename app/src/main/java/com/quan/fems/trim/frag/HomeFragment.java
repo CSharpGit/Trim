@@ -28,6 +28,13 @@ import com.quan.fems.trim.adapter.SlideAdapter;
 import com.quan.fems.trim.base.BaseFragment;
 import com.quan.fems.trim.base.OnSingleClickListener;
 import com.quan.fems.trim.bean.SlideBean;
+import com.quan.fems.trim.server.AsyncHttpCient;
+import com.quan.fems.trim.server.Commons;
+import com.quan.fems.trim.server.HttpListener;
+import com.quan.fems.trim.server.HttpParam;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +56,8 @@ public class HomeFragment extends BaseFragment{
     private int currentItem=0;
     private ScheduledExecutorService scheduledExecutorService;
 
+    private List<SlideBean> bannerListBean;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -64,13 +73,15 @@ public class HomeFragment extends BaseFragment{
         slide = view.findViewById(R.id.banner_slide);
         toDesignerList=view.findViewById(R.id.to_designer_list);
         toTrimScene=view.findViewById(R.id.to_trim_scene);
+        bannerListBean =new ArrayList<SlideBean>();
         initIconRecyclerView();
         initDesignerRecyclerView();
         initTrimSceneRecyclerView();
     }
 
     private void initData(){
-        initBannerData();
+        //initBannerData();
+        loadBannerData();
     }
 
     private void initEvent() {
@@ -147,6 +158,51 @@ public class HomeFragment extends BaseFragment{
         intent.setData(Uri.parse("tel:" + str));
         startActivity(intent);
     }
+
+    private void loadBannerData(){
+        AsyncHttpCient hndl = new AsyncHttpCient();
+        HttpParam prm = new HttpParam();
+        prm.httpListener = bannerHttpListener;
+        prm.url = Commons.BANNER;
+        hndl.execute(prm);
+    }
+    private HttpListener bannerHttpListener = new HttpListener() {
+        @Override
+        public void onPostData(String data) {
+            try {
+                JSONObject jsn = new JSONObject(data);
+                bannerListBean.clear();
+                if(jsn.getInt("errcode")==0){
+                    System.out.println(data);
+                    JSONArray dd = jsn.getJSONArray("data");
+                    for (int i=0;i<dd.length();i++){
+                        JSONObject jsnList=dd.getJSONObject(i);
+                        SlideBean sb = new SlideBean();
+                        sb.id=jsnList.getInt("_id");
+                        sb.imgurl=jsnList.getString("img");
+                        bannerListBean.add(sb);
+                        ImageView iView = new ImageView(getActivity());
+                        //点大小
+                        iView.setLayoutParams(new ViewGroup.LayoutParams(20,20));
+                        slide_list[i] = iView;
+                        if (i == 0) {
+                            slide_list[i].setBackgroundResource(R.drawable.slide_2);
+                        }else {
+                            slide_list[i].setBackgroundResource(R.drawable.slide_1);
+                        }
+                        slide.addView(slide_list[i]);
+                    }
+                    SlideAdapter sdp = new SlideAdapter(getActivity(),bannerListBean);
+                    mViewPager.setAdapter(sdp);
+                    mViewPager.addOnPageChangeListener(new MyPageChangeListener());
+                    sdp.notifyDataSetChanged();
+//                  ImageLoader.getInstance().displayImage(Commons.WEB_URL+jsn.getString("errmsg"),backView,options,mImageLoadingListener);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     private void initBannerData() {
         ArrayList<SlideBean> lsts = new ArrayList<SlideBean>();
