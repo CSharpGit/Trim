@@ -1,51 +1,65 @@
 package com.quan.fems.trim.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.quan.fems.trim.R;
 
 import java.util.List;
 
-public class HomeTrimSceneAdapter extends  RecyclerView.Adapter<HomeTrimSceneAdapter.MyViewHolder> {
-    private List<String> listData;
-    private Context mContext;
-    private LayoutInflater inflater;
-    public HomeTrimSceneAdapter(Context context, List<String> data){
-        this. mContext=context;
-        this.listData=data;
-        inflater=LayoutInflater. from(mContext);
+public class HomeTrimSceneAdapter extends RecyclerView.Adapter<HomeTrimSceneAdapter.ViewHolder> {
+    private List<String> list;
+    private OnItemClickListener mOnItemClickListener;
+    public HomeTrimSceneAdapter(List<String> list) {
+        this.list = list;
+    }
+    public void setOnItemClickListener(OnItemClickListener mOnItemClickListener)
+    {
+        this.mOnItemClickListener = mOnItemClickListener;
+    }
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_trim_scene_item, parent, false);
+        ViewHolder viewHolder = new ViewHolder(view);
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, final int position) {
+        holder.mText.setText(list.get(position));
+        if(mOnItemClickListener != null){
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnItemClickListener.onItemClick(v,position);
+                }
+            });
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mOnItemClickListener.onItemClick(v,position);
+                    return false;
+                }
+            });
+        }
     }
 
     @Override
     public int getItemCount() {
-        return listData.size();
+        return list.size();
     }
-
-    //填充onCreateViewHolder方法返回的holder中的控件
-    @Override
-    public void onBindViewHolder(MyViewHolder holder, final int position) {
-        holder.nameView.setText( listData.get(position));
-    }
-
-    //重写onCreateViewHolder方法，返回一个自定义的ViewHolder
-    @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.home_trim_scene_item,parent,false);
-        MyViewHolder holder= new MyViewHolder(view);
-        return holder;
-    }
-
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView nameView;
-        public MyViewHolder(View view) {
-            super(view);
-            nameView=view.findViewById(R.id.name_view);
+    class ViewHolder extends RecyclerView.ViewHolder {
+        TextView mText;
+        ViewHolder(View itemView) {
+            super(itemView);
+            mText = itemView.findViewById(R.id.name_view);
         }
-
+    }
+    public interface OnItemClickListener
+    {
+        void onItemClick(View view, int position);
+        void onItemLongClick(View view , int position);
     }
 }

@@ -10,10 +10,10 @@ import com.quan.fems.trim.R;
 
 import java.util.List;
 
-public class HomeDesignerAdapter extends RecyclerView.Adapter<HomeDesignerAdapter.ViewHolder> {
+public class TrimeSceneDetailAdapter extends RecyclerView.Adapter<TrimeSceneDetailAdapter.ViewHolder> {
     private List<String> list;
     private OnItemClickListener mOnItemClickListener;
-    public HomeDesignerAdapter(List<String> list) {
+    public TrimeSceneDetailAdapter(List<String> list) {
         this.list = list;
     }
     public void setOnItemClickListener(OnItemClickListener mOnItemClickListener)
@@ -22,7 +22,7 @@ public class HomeDesignerAdapter extends RecyclerView.Adapter<HomeDesignerAdapte
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.designer_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.trim_scene_detail_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }

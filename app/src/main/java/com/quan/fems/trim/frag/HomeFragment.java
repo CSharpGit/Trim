@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -15,12 +16,17 @@ import android.widget.ImageView;
 
 import com.quan.fems.trim.R;
 import com.quan.fems.trim.activity.CalculatorActivity;
+import com.quan.fems.trim.activity.DesignerDetailActivity;
+import com.quan.fems.trim.activity.DesignerListActivity;
 import com.quan.fems.trim.activity.ReserveActivity;
+import com.quan.fems.trim.activity.TrimSceneActivity;
+import com.quan.fems.trim.activity.TrimSceneDetailActivity;
 import com.quan.fems.trim.adapter.HomeDesignerAdapter;
 import com.quan.fems.trim.adapter.HomeIconAdapter;
 import com.quan.fems.trim.adapter.HomeTrimSceneAdapter;
 import com.quan.fems.trim.adapter.SlideAdapter;
 import com.quan.fems.trim.base.BaseFragment;
+import com.quan.fems.trim.base.OnSingleClickListener;
 import com.quan.fems.trim.bean.SlideBean;
 
 import java.util.ArrayList;
@@ -31,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 public class HomeFragment extends BaseFragment{
     private View view = null;
+    private ConstraintLayout toDesignerList,toTrimScene;
     private RecyclerView mHomeIconRecyclerView,mHomeDesignerRecyclerView,mHomeTrimSceneRecyclerView;
     private List<String> iListData,dListData,tListData;
     private HomeIconAdapter mHomeIconAdapter;
@@ -55,6 +62,8 @@ public class HomeFragment extends BaseFragment{
     private void initView(){
         mViewPager = view.findViewById(R.id.viewPager);
         slide = view.findViewById(R.id.banner_slide);
+        toDesignerList=view.findViewById(R.id.to_designer_list);
+        toTrimScene=view.findViewById(R.id.to_trim_scene);
         initIconRecyclerView();
         initDesignerRecyclerView();
         initTrimSceneRecyclerView();
@@ -65,7 +74,7 @@ public class HomeFragment extends BaseFragment{
     }
 
     private void initEvent() {
-        mHomeIconAdapter.setOnItemClickLitener(new HomeIconAdapter.OnItemClickLitener() {
+        mHomeIconAdapter.setOnItemClickListener(new HomeIconAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 switch (position){
@@ -81,6 +90,8 @@ public class HomeFragment extends BaseFragment{
                         getActivity().startActivity(resIntent);
                         break;
                     case 3:
+                        Intent designerIntent =new Intent(getActivity(),DesignerListActivity.class);
+                        getActivity().startActivity(designerIntent);
                         break;
                 }
             }
@@ -88,6 +99,44 @@ public class HomeFragment extends BaseFragment{
             @Override
             public void onItemLongClick(View view, int position) {
 
+            }
+        });
+        mHomeDesignerAdapter.setOnItemClickListener(new HomeDesignerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent =new Intent(getActivity(),DesignerDetailActivity.class);
+                getActivity().startActivity(intent);
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+
+            }
+        });
+        mHomeTrimSceneAdapter.setOnItemClickListener(new HomeTrimSceneAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent =new Intent(getActivity(),TrimSceneDetailActivity.class);
+                getActivity().startActivity(intent);
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+
+            }
+        });
+        toDesignerList.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            protected void onSingleClick(View v) {
+                Intent intent=new Intent(getActivity(),DesignerListActivity.class);
+                getActivity().startActivity(intent);
+            }
+        });
+        toTrimScene.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            protected void onSingleClick(View v) {
+                Intent intent=new Intent(getActivity(),TrimSceneActivity.class);
+                getActivity().startActivity(intent);
             }
         });
     }
@@ -126,10 +175,10 @@ public class HomeFragment extends BaseFragment{
     private void initIconRecyclerView() {
         mHomeIconRecyclerView=view.findViewById(R.id.recycler_view_icon);
         iListData=new ArrayList<>();
-        iListData.add("图标1");
-        iListData.add("图标1");
-        iListData.add("图标1");
-        iListData.add("图标1");
+        iListData.add("计算器");
+        iListData.add("咨询热线");
+        iListData.add("免费设计");
+        iListData.add("设计师");
         mHomeIconAdapter=new HomeIconAdapter(iListData);
         StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(4,StaggeredGridLayoutManager.VERTICAL);
         mHomeIconRecyclerView.setLayoutManager(staggered);
@@ -143,7 +192,7 @@ public class HomeFragment extends BaseFragment{
         dListData.add("李冰");
         dListData.add("李冰");
         dListData.add("李冰");
-        mHomeDesignerAdapter=new HomeDesignerAdapter(getActivity(),dListData);
+        mHomeDesignerAdapter=new HomeDesignerAdapter(dListData);
         StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.HORIZONTAL);
         mHomeDesignerRecyclerView.setLayoutManager(staggered);
         mHomeDesignerRecyclerView.setAdapter(mHomeDesignerAdapter);
@@ -156,7 +205,7 @@ public class HomeFragment extends BaseFragment{
         tListData.add("欧式简约");
         tListData.add("欧式简约");
         tListData.add("欧式简约");
-        mHomeTrimSceneAdapter=new HomeTrimSceneAdapter(getActivity(),tListData);
+        mHomeTrimSceneAdapter=new HomeTrimSceneAdapter(tListData);
         StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.HORIZONTAL);
         mHomeTrimSceneRecyclerView.setLayoutManager(staggered);
         mHomeTrimSceneRecyclerView.setAdapter(mHomeTrimSceneAdapter);

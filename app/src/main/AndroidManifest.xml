@@ -22,5 +22,9 @@
         <activity android:name=".activity.CalculatorActivity"/>
         <activity android:name=".PickerViewDemo"/>
         <activity android:name=".activity.ReserveActivity"/>
+        <activity android:name=".activity.DesignerListActivity"/>
+        <activity android:name=".activity.TrimSceneActivity"/>
+        <activity android:name=".activity.DesignerDetailActivity"/>
+        <activity android:name=".activity.TrimSceneDetailActivity"/>
     </application>
 </manifest>
