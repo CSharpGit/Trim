@@ -121,6 +121,7 @@ public class HomeFragment extends BaseFragment{
                         hdb.imgurl=jsnList.getString("img");
                         hdb.dName=jsnList.getString("name");
                         hdb.posit=jsnList.getString("posit");
+                        hdb.tel=jsnList.getString("tel");
                         designerListBean.add(hdb);
                     }
                     mHomeDesignerAdapter.notifyDataSetChanged();
@@ -187,7 +188,8 @@ public class HomeFragment extends BaseFragment{
             @Override
             public void onItemClick(View view, int position,List<DesignerBean> list) {
                 Intent intent =new Intent(getActivity(),DesignerDetailActivity.class);
-                intent.putExtra("id",list.get(position).id);
+                intent.putExtra("did",list.get(position).id);
+                intent.putExtra("tel",list.get(position).tel);
                 getActivity().startActivity(intent);
             }
 
