@@ -107,6 +107,7 @@ public class DesignerListActivity extends BaseActivity {
             @Override
             public void onItemClick(View view, int position,List<DesignerBean> list) {
                 Intent intent=new Intent(DesignerListActivity.this,DesignerDetailActivity.class);
+                intent.putExtra("id",list.get(position).id);
                 DesignerListActivity.this.startActivity(intent);
             }
 
@@ -114,12 +115,5 @@ public class DesignerListActivity extends BaseActivity {
             public void onItemLongClick(View view, int position,List<DesignerBean> list) {
             }
         });
-    }
-
-    public void callPhone(String str) {
-        Intent intent=new Intent();
-        intent.setAction(Intent.ACTION_DIAL);
-        intent.setData(Uri.parse("tel:" + str));
-        DesignerListActivity.this.startActivity(intent);
     }
 }

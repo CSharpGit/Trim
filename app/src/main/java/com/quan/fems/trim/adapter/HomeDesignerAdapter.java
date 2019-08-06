@@ -49,13 +49,13 @@ public class HomeDesignerAdapter extends RecyclerView.Adapter<HomeDesignerAdapte
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnItemClickListener.onItemClick(v,position);
+                    mOnItemClickListener.onItemClick(v,position,list);
                 }
             });
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    mOnItemClickListener.onItemClick(v,position);
+                    mOnItemClickListener.onItemClick(v,position,list);
                     return false;
                 }
             });
@@ -78,8 +78,8 @@ public class HomeDesignerAdapter extends RecyclerView.Adapter<HomeDesignerAdapte
     }
     public interface OnItemClickListener
     {
-        void onItemClick(View view, int position);
-        void onItemLongClick(View view , int position);
+        void onItemClick(View view, int position,List<DesignerBean> list);
+        void onItemLongClick(View view , int position,List<DesignerBean> list);
     }
 
     /**

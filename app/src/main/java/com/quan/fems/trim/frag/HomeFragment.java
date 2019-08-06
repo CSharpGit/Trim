@@ -185,13 +185,14 @@ public class HomeFragment extends BaseFragment{
         });
         mHomeDesignerAdapter.setOnItemClickListener(new HomeDesignerAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position) {
+            public void onItemClick(View view, int position,List<DesignerBean> list) {
                 Intent intent =new Intent(getActivity(),DesignerDetailActivity.class);
+                intent.putExtra("id",list.get(position).id);
                 getActivity().startActivity(intent);
             }
 
             @Override
-            public void onItemLongClick(View view, int position) {
+            public void onItemLongClick(View view, int position,List<DesignerBean> list) {
 
             }
         });

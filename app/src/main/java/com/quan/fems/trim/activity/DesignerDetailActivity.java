@@ -1,5 +1,6 @@
 package com.quan.fems.trim.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -7,10 +8,20 @@ import android.widget.TextView;
 
 import com.quan.fems.trim.R;
 import com.quan.fems.trim.base.BaseActivity;
+import com.quan.fems.trim.bean.DesignerBean;
+import com.quan.fems.trim.server.AsyncHttpCient;
+import com.quan.fems.trim.server.Commons;
+import com.quan.fems.trim.server.HttpListener;
+import com.quan.fems.trim.server.HttpParam;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class DesignerDetailActivity extends BaseActivity {
     private ImageView backView;
     private TextView titleName;
+    private Intent intent=getIntent();
+    int d_id = intent.getIntExtra("id", 0);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +31,31 @@ public class DesignerDetailActivity extends BaseActivity {
         initData();
         initEvent();
     }
+
+    private void loadData() {
+        AsyncHttpCient hndl = new AsyncHttpCient();
+        HttpParam prm = new HttpParam();
+        prm.httpListener = mHttpListener;
+        prm.url = Commons.DESIGNERDTL;
+        prm.param.add("id",d_id);
+        hndl.execute(prm);
+    }
+
+    private HttpListener mHttpListener = new HttpListener() {
+        @Override
+        public void onPostData(String data) {
+            try {
+                JSONObject jsn = new JSONObject(data);
+                if(jsn.getInt("errcode")==0){
+                    JSONArray dd = jsn.getJSONArray("data");
+                    JSONObject jsnList=dd.getJSONObject(0);
+                    System.out.println(jsnList);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     private void initView() {
         backView = findViewById(R.id.back_view);
