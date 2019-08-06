@@ -27,6 +27,7 @@ import com.quan.fems.trim.adapter.HomeTrimSceneAdapter;
 import com.quan.fems.trim.adapter.SlideAdapter;
 import com.quan.fems.trim.base.BaseFragment;
 import com.quan.fems.trim.base.OnSingleClickListener;
+import com.quan.fems.trim.bean.DesignerBean;
 import com.quan.fems.trim.bean.HomeIconBean;
 import com.quan.fems.trim.bean.SlideBean;
 import com.quan.fems.trim.server.AsyncHttpCient;
@@ -47,7 +48,7 @@ public class HomeFragment extends BaseFragment{
     private View view = null;
     private ConstraintLayout toDesignerList,toTrimScene;
     private RecyclerView mHomeIconRecyclerView,mHomeDesignerRecyclerView,mHomeTrimSceneRecyclerView;
-    private List<String> dListData,tListData;
+    private List<String> tListData;
     private HomeIconAdapter mHomeIconAdapter;
     private HomeDesignerAdapter mHomeDesignerAdapter;
     private HomeTrimSceneAdapter mHomeTrimSceneAdapter;
@@ -59,6 +60,7 @@ public class HomeFragment extends BaseFragment{
 
     private List<SlideBean> bannerListBean;
     private List<HomeIconBean> iconListBean;
+    private List<DesignerBean> designerListBean;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,6 +87,7 @@ public class HomeFragment extends BaseFragment{
         slide_list = new ImageView[4];
         loadBannerData();
         loadIconData();
+        loadDesignerData();
     }
 
     private void loadIconData() {
@@ -94,6 +97,39 @@ public class HomeFragment extends BaseFragment{
         prm.url = Commons.ICON;
         hndl.execute(prm);
     }
+
+    private void loadDesignerData() {
+        AsyncHttpCient hndl = new AsyncHttpCient();
+        HttpParam prm = new HttpParam();
+        prm.httpListener = designerHttpListener;
+        prm.url = Commons.HOMEDESIGNER;
+        hndl.execute(prm);
+    }
+
+    private HttpListener designerHttpListener = new HttpListener() {
+        @Override
+        public void onPostData(String data) {
+            try {
+                JSONObject jsn = new JSONObject(data);
+                designerListBean.clear();
+                if(jsn.getInt("errcode")==0){
+                    JSONArray dd = jsn.getJSONArray("data");
+                    for (int i=0;i<dd.length();i++){
+                        JSONObject jsnList=dd.getJSONObject(i);
+                        DesignerBean hdb = new DesignerBean();
+                        hdb.id=jsnList.getInt("_id");
+                        hdb.imgurl=jsnList.getString("img");
+                        hdb.dName=jsnList.getString("name");
+                        hdb.posit=jsnList.getString("posit");
+                        designerListBean.add(hdb);
+                    }
+                    mHomeDesignerAdapter.notifyDataSetChanged();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     private HttpListener iconHttpListener = new HttpListener() {
         @Override
@@ -191,7 +227,7 @@ public class HomeFragment extends BaseFragment{
         Intent intent=new Intent();
         intent.setAction(Intent.ACTION_DIAL);
         intent.setData(Uri.parse("tel:" + str));
-        startActivity(intent);
+        getActivity().startActivity(intent);
     }
 
     private void loadBannerData(){
@@ -230,7 +266,6 @@ public class HomeFragment extends BaseFragment{
                     mViewPager.setAdapter(sdp);
                     mViewPager.addOnPageChangeListener(new MyPageChangeListener());
                     sdp.notifyDataSetChanged();
-//                  ImageLoader.getInstance().displayImage(Commons.WEB_URL+jsn.getString("errmsg"),backView,options,mImageLoadingListener);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -249,12 +284,8 @@ public class HomeFragment extends BaseFragment{
 
     private void initDesignerRecyclerView() {
         mHomeDesignerRecyclerView=view.findViewById(R.id.recycler_view_designer);
-        dListData=new ArrayList<>();
-        dListData.add("李冰");
-        dListData.add("李冰");
-        dListData.add("李冰");
-        dListData.add("李冰");
-        mHomeDesignerAdapter=new HomeDesignerAdapter(dListData);
+        designerListBean=new ArrayList<>();
+        mHomeDesignerAdapter=new HomeDesignerAdapter(designerListBean);
         StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.HORIZONTAL);
         mHomeDesignerRecyclerView.setLayoutManager(staggered);
         mHomeDesignerRecyclerView.setAdapter(mHomeDesignerAdapter);
@@ -271,6 +302,8 @@ public class HomeFragment extends BaseFragment{
         StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.HORIZONTAL);
         mHomeTrimSceneRecyclerView.setLayoutManager(staggered);
         mHomeTrimSceneRecyclerView.setAdapter(mHomeTrimSceneAdapter);
+
+
     }
     private class MyPageChangeListener implements ViewPager.OnPageChangeListener {
         public void onPageSelected(int position) {

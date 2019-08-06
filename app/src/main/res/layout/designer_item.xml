@@ -22,6 +22,7 @@
             app:cardCornerRadius="40dp"
             app:cardElevation="0dp">
             <ImageView
+                android:id="@+id/img_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
@@ -37,6 +38,7 @@
         android:textColor="@color/textPrimary"/>
 
         <TextView
+            android:id="@+id/posit_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"

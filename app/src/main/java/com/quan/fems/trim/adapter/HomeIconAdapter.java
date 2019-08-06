@@ -25,7 +25,7 @@ import java.util.List;
 
 public class HomeIconAdapter extends RecyclerView.Adapter<HomeIconAdapter.ViewHolder> {
     protected DisplayImageOptions options;
-    protected ImageLoadingListener mImageLoadingListener = new AnimateFirstDisplayListener();
+    protected ImageLoadingListener mImageLoadingListener=new ImageDisplayListener();
     private List<HomeIconBean> list;
     private OnItemClickListener mOnItemClickListener;
     public HomeIconAdapter(List<HomeIconBean> list) {
@@ -82,7 +82,10 @@ public class HomeIconAdapter extends RecyclerView.Adapter<HomeIconAdapter.ViewHo
         void onItemLongClick(View view , int position);
     }
 
-    private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
+    /**
+     * @功能：图片的加载使用
+     */
+    public static class ImageDisplayListener extends SimpleImageLoadingListener {
         static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
         @Override
         public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {

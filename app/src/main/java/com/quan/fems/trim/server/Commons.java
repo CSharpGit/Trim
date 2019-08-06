@@ -12,4 +12,8 @@ public class Commons {
     public static final String BANNER =WEB_URL+"home/banner";
     //首页图标
     public static final String ICON =  WEB_URL + "home/icon";
+    //首页设计师
+    public static final String HOMEDESIGNER =  WEB_URL + "home/designer";
+    //设计师列表
+    public static final String DESIGNERLIST =  WEB_URL + "designer/list";
 }
