@@ -105,7 +105,6 @@ public class HomeFragment extends BaseFragment{
         public void onPostData(String data) {
             try {
                 JSONObject jsn = new JSONObject(data);
-                System.out.println("******************************************"+jsn);
                 sceneListBean.clear();
                 if(jsn.getInt("errcode")==0){
                     JSONArray dd = jsn.getJSONArray("data");
@@ -236,13 +235,14 @@ public class HomeFragment extends BaseFragment{
         });
         mHomeTrimSceneAdapter.setOnItemClickListener(new HomeTrimSceneAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position) {
-                Intent intent =new Intent(getActivity(),TrimSceneDetailActivity.class);
+            public void onItemClick(View view, int position,List<HomeTrimSceneBean> list) {
+                Intent intent =new Intent(getActivity(),TrimSceneActivity.class);
+                intent.putExtra("styleName",list.get(position).styleLabel);
                 getActivity().startActivity(intent);
             }
 
             @Override
-            public void onItemLongClick(View view, int position) {
+            public void onItemLongClick(View view, int position,List<HomeTrimSceneBean> list) {
 
             }
         });
@@ -257,6 +257,7 @@ public class HomeFragment extends BaseFragment{
             @Override
             protected void onSingleClick(View v) {
                 Intent intent=new Intent(getActivity(),TrimSceneActivity.class);
+                intent.putExtra("styleName","all");
                 getActivity().startActivity(intent);
             }
         });

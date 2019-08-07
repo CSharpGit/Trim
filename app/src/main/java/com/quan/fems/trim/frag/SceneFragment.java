@@ -12,6 +12,7 @@ import com.quan.fems.trim.R;
 import com.quan.fems.trim.activity.TrimSceneDetailActivity;
 import com.quan.fems.trim.adapter.TrimSceneAdapter;
 import com.quan.fems.trim.base.BaseFragment;
+import com.quan.fems.trim.bean.TrimSceneBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
 public class SceneFragment extends BaseFragment{
     private RecyclerView mRecyclerView;
     private TrimSceneAdapter mAdapter;
-    private List<String> listData;
+    private List<TrimSceneBean> listData;
     private View view = null;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,9 +51,9 @@ public class SceneFragment extends BaseFragment{
         initRecyclerView();
     }
     private void initData(){
-        for (int i=0;i<20;i++){
-            listData.add("欧式简约");
-        }
+//        for (int i=0;i<20;i++){
+//            listData.get(i).styleName="欧式简约";
+//        }
         mAdapter.notifyDataSetChanged();
     }
 
