@@ -107,8 +107,13 @@ public class DesignerListActivity extends BaseActivity {
             @Override
             public void onItemClick(View view, int position,List<DesignerBean> list) {
                 Intent intent=new Intent(DesignerListActivity.this,DesignerDetailActivity.class);
-                intent.putExtra("id",list.get(position).id);
+                intent.putExtra("did",list.get(position).id);
+                intent.putExtra("tel",list.get(position).tel);
                 DesignerListActivity.this.startActivity(intent);
+            }
+
+            public String getType(Object o){ //获取变量类型方法
+                return o.getClass().toString(); //使用int类型的getClass()方法
             }
 
             @Override
