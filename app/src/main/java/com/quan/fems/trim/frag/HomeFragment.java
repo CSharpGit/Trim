@@ -29,6 +29,7 @@ import com.quan.fems.trim.base.BaseFragment;
 import com.quan.fems.trim.base.OnSingleClickListener;
 import com.quan.fems.trim.bean.DesignerBean;
 import com.quan.fems.trim.bean.HomeIconBean;
+import com.quan.fems.trim.bean.HomeTrimSceneBean;
 import com.quan.fems.trim.bean.SlideBean;
 import com.quan.fems.trim.server.AsyncHttpCient;
 import com.quan.fems.trim.server.Commons;
@@ -48,7 +49,6 @@ public class HomeFragment extends BaseFragment{
     private View view = null;
     private ConstraintLayout toDesignerList,toTrimScene;
     private RecyclerView mHomeIconRecyclerView,mHomeDesignerRecyclerView,mHomeTrimSceneRecyclerView;
-    private List<String> tListData;
     private HomeIconAdapter mHomeIconAdapter;
     private HomeDesignerAdapter mHomeDesignerAdapter;
     private HomeTrimSceneAdapter mHomeTrimSceneAdapter;
@@ -61,6 +61,7 @@ public class HomeFragment extends BaseFragment{
     private List<SlideBean> bannerListBean;
     private List<HomeIconBean> iconListBean;
     private List<DesignerBean> designerListBean;
+    private List<HomeTrimSceneBean> sceneListBean;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -88,7 +89,42 @@ public class HomeFragment extends BaseFragment{
         loadBannerData();
         loadIconData();
         loadDesignerData();
+        loadTrimSceneData();
     }
+
+    private void loadTrimSceneData() {
+        AsyncHttpCient hndl = new AsyncHttpCient();
+        HttpParam prm = new HttpParam();
+        prm.httpListener = trimSceneHttpListener;
+        prm.url = Commons.HOMETRIMSCENE;
+        hndl.execute(prm);
+    }
+
+    private HttpListener trimSceneHttpListener = new HttpListener() {
+        @Override
+        public void onPostData(String data) {
+            try {
+                JSONObject jsn = new JSONObject(data);
+                System.out.println("******************************************"+jsn);
+                sceneListBean.clear();
+                if(jsn.getInt("errcode")==0){
+                    JSONArray dd = jsn.getJSONArray("data");
+                    for (int i=0;i<dd.length();i++){
+                        JSONObject jsnList=dd.getJSONObject(i);
+                        HomeTrimSceneBean htsb = new HomeTrimSceneBean();
+                        htsb.id=jsnList.getInt("_id");
+                        htsb.imgurl=jsnList.getString("img");
+                        htsb.styleLabel=jsnList.getString("style");
+                        htsb.styleCount=dd.length();
+                        sceneListBean.add(htsb);
+                    }
+                    mHomeTrimSceneAdapter.notifyDataSetChanged();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     private void loadIconData() {
         AsyncHttpCient hndl = new AsyncHttpCient();
@@ -296,17 +332,11 @@ public class HomeFragment extends BaseFragment{
 
     private void initTrimSceneRecyclerView() {
         mHomeTrimSceneRecyclerView=view.findViewById(R.id.recycler_view_trim_scene);
-        tListData=new ArrayList<>();
-        tListData.add("欧式简约");
-        tListData.add("欧式简约");
-        tListData.add("欧式简约");
-        tListData.add("欧式简约");
-        mHomeTrimSceneAdapter=new HomeTrimSceneAdapter(tListData);
+        sceneListBean=new ArrayList<>();
+        mHomeTrimSceneAdapter=new HomeTrimSceneAdapter(sceneListBean);
         StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.HORIZONTAL);
         mHomeTrimSceneRecyclerView.setLayoutManager(staggered);
         mHomeTrimSceneRecyclerView.setAdapter(mHomeTrimSceneAdapter);
-
-
     }
     private class MyPageChangeListener implements ViewPager.OnPageChangeListener {
         public void onPageSelected(int position) {

@@ -18,4 +18,6 @@ public class Commons {
     public static final String DESIGNERLIST =  WEB_URL + "designer/list";
     //设计师详情
     public static final String DESIGNERDTL =  WEB_URL + "designer/detail";
+    //首页装修案例
+    public static final String HOMETRIMSCENE =  WEB_URL + "home/trim/scene";
 }

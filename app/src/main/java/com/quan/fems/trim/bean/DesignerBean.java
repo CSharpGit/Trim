@@ -10,5 +10,4 @@ public class DesignerBean {
     public String concept;
     public String tel;
     public int experi;
-
 }
