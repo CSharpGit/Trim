@@ -22,4 +22,6 @@ public class Commons {
     public static final String HOMETRIMSCENE =  WEB_URL + "home/trim/scene";
     //装修案例
     public static final String TRIMSCENE =  WEB_URL + "trim/scene";
+    //装修案例详情
+    public static final String TRIMSCENEDETAIL =  WEB_URL + "trim/scene/detail";
 }

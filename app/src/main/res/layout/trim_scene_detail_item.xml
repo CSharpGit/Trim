@@ -9,13 +9,14 @@
     android:layout_marginBottom="10dp"
     android:orientation="vertical">
     <TextView
-        android:id="@+id/name_view"
+        android:id="@+id/cfg_name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/textSubTitle"
         android:textColor="@color/textPrimary"
         android:text="标题名称"/>
     <ImageView
+        android:id="@+id/cfg_img_view"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginTop="10dp"

@@ -107,5 +107,18 @@ public class TrimSceneActivity extends BaseActivity {
                 TrimSceneActivity.this.finish();
             }
         });
+        mAdapter.setOnItemClickListener(new TrimSceneAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position, List<TrimSceneBean> list) {
+                Intent intent=new Intent(TrimSceneActivity.this,TrimSceneDetailActivity.class);
+                intent.putExtra("id",list.get(position).id);
+                TrimSceneActivity.this.startActivity(intent);
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position, List<TrimSceneBean> list) {
+
+            }
+        });
     }
 }

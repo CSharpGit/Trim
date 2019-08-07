@@ -49,13 +49,13 @@ public class TrimSceneAdapter extends RecyclerView.Adapter<TrimSceneAdapter.View
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnItemClickListener.onItemClick(v,position);
+                    mOnItemClickListener.onItemClick(v,position,list);
                 }
             });
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    mOnItemClickListener.onItemClick(v,position);
+                    mOnItemClickListener.onItemClick(v,position,list);
                     return false;
                 }
             });
@@ -78,8 +78,8 @@ public class TrimSceneAdapter extends RecyclerView.Adapter<TrimSceneAdapter.View
     }
     public interface OnItemClickListener
     {
-        void onItemClick(View view, int position);
-        void onItemLongClick(View view , int position);
+        void onItemClick(View view, int position,List<TrimSceneBean> list);
+        void onItemLongClick(View view , int position,List<TrimSceneBean> list);
     }
 
     /**
