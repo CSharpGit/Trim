@@ -3,6 +3,8 @@ package com.quan.fems.trim;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -16,42 +18,55 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.CustomListener;
+import com.bigkoo.pickerview.listener.OnOptionsSelectChangeListener;
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.listener.OnTimeSelectChangeListener;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
+import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.bigkoo.pickerview.view.TimePickerView;
+import com.google.gson.Gson;
 import com.quan.fems.trim.base.BaseActivity;
 
+import org.json.JSONArray;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class PickerViewDemo extends BaseActivity {
-    private TextView pickerTime, pickerCustomTime,pickerCustomCalendar;
-    private TimePickerView pvTime, pvCustomTime,pvCustomCalendar;
-
+    //点击按钮
+    private TextView pickerTime, pickerCustomTime, pickerCustomCalendar, pickerProvince, pickerProvinceThree, pickerNoLinkChoose;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.picker_view_demo);
+        loadOptionData();
+        loadNoLinkData();
         initView();
         initData();
         initEvent();
     }
-
     private void initView() {
         pickerTime = findViewById(R.id.picker_time);
         pickerCustomTime = findViewById(R.id.picker_custom_time);
-        pickerCustomCalendar=findViewById(R.id.picker_custom_calendar);
+        pickerCustomCalendar = findViewById(R.id.picker_custom_calendar);
+        pickerProvince = findViewById(R.id.picker_province);
+        pickerProvinceThree = findViewById(R.id.picker_province_three);
+        pickerNoLinkChoose = findViewById(R.id.picker_no_link_choose);
         initTimePicker();
         initCustomTimePicker();
         initLunarPicker();
+        initOptionPicker();
+        mHandler.sendEmptyMessage(MSG_LOAD_DATA);
+        initNoLinkOptionsPicker();
     }
-
     private void initData() {
     }
-
     private void initEvent() {
         pickerTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,11 +86,180 @@ public class PickerViewDemo extends BaseActivity {
                 pvCustomCalendar.show();
             }
         });
+        pickerProvince.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pvOptions.show();
+            }
+        });
+        pickerProvinceThree.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLoaded) {
+                    showPickerView();
+                } else {
+                    Toast.makeText(PickerViewDemo.this, "Please waiting until the data is parsed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        pickerNoLinkChoose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pvNoLinkOptions.show();
+            }
+        });
     }
 
+    /********************************************************@ 省市3联动案例 start ****************************************************/
+
+    //省市3联动案例
+    private List<JsonBean> provinceItems = new ArrayList<>();
+    private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
+    private ArrayList<ArrayList<ArrayList<String>>> districtItems = new ArrayList<>();
+    private Thread thread;
+    private static final int MSG_LOAD_DATA = 0x0001;
+    private static final int MSG_LOAD_SUCCESS = 0x0002;
+    private static final int MSG_LOAD_FAILED = 0x0003;
+    private static boolean isLoaded = false;
+
+    private Handler mHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_LOAD_DATA:
+                    if (thread == null) {//如果已创建就不再重新创建子线程了
+                        Toast.makeText(PickerViewDemo.this, "Begin Parse Data", Toast.LENGTH_SHORT).show();
+                        thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // 子线程中解析省市区数据
+                                initJsonData();
+                            }
+                        });
+                        thread.start();
+                    }
+                    break;
+                case MSG_LOAD_SUCCESS:
+                    Toast.makeText(PickerViewDemo.this, "Parse Succeed", Toast.LENGTH_SHORT).show();
+                    isLoaded = true;
+                    break;
+                case MSG_LOAD_FAILED:
+                    Toast.makeText(PickerViewDemo.this, "Parse Failed", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+    private void showPickerView() {// 弹出选择器
+
+        OptionsPickerView pvtOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                //返回的分别是三个级别的选中位置
+                String opt1tx = provinceItems.size() > 0 ?
+                        provinceItems.get(options1).getPickerViewText() : "";
+
+                String opt2tx = cityItems.size() > 0
+                        && cityItems.get(options1).size() > 0 ?
+                        cityItems.get(options1).get(options2) : "";
+
+                String opt3tx = cityItems.size() > 0
+                        && districtItems.get(options1).size() > 0
+                        && districtItems.get(options1).get(options2).size() > 0 ?
+                        districtItems.get(options1).get(options2).get(options3) : "";
+
+                String tx = opt1tx + opt2tx + opt3tx;
+                Toast.makeText(PickerViewDemo.this, tx, Toast.LENGTH_SHORT).show();
+            }
+        })
+                .setTitleText("城市选择")
+                .setDividerColor(Color.BLACK)
+                .setTextColorCenter(Color.BLACK) //设置选中项文字颜色
+                .setContentTextSize(20)
+                .build();
+
+        /*pvtOptions.setPicker(options1Items);//一级选择器
+        pvtOptions.setPicker(options1Items, options2Items);//二级选择器*/
+        pvtOptions.setPicker(provinceItems, cityItems, districtItems);//三级选择器
+        pvtOptions.show();
+    }
+    private void initJsonData() {//解析数据
+
+        /**
+         * 注意：assets 目录下的Json文件仅供参考，实际使用可自行替换文件
+         * 关键逻辑在于循环体
+         *
+         * */
+        String JsonData = new GetJsonDataUtil().getJson(this, "province.json");//获取assets目录下的json文件数据
+
+        ArrayList<JsonBean> jsonBean = parseData(JsonData);//用Gson 转成实体
+
+        /**
+         * 添加省份数据
+         *
+         * 注意：如果是添加的JavaBean实体，则实体类需要实现 IPickerViewData 接口，
+         * PickerView会通过getPickerViewText方法获取字符串显示出来。
+         */
+        provinceItems = jsonBean;
+
+        for (int i = 0; i < jsonBean.size(); i++) {//遍历省份
+            ArrayList<String> cityList = new ArrayList<>();//该省的城市列表（第二级）
+            ArrayList<ArrayList<String>> province_AreaList = new ArrayList<>();//该省的所有地区列表（第三极）
+
+            for (int c = 0; c < jsonBean.get(i).getCityList().size(); c++) {//遍历该省份的所有城市
+                String cityName = jsonBean.get(i).getCityList().get(c).getName();
+                cityList.add(cityName);//添加城市
+                ArrayList<String> city_AreaList = new ArrayList<>();//该城市的所有地区列表
+
+                //如果无地区数据，建议添加空字符串，防止数据为null 导致三个选项长度不匹配造成崩溃
+                /*if (jsonBean.get(i).getCityList().get(c).getArea() == null
+                        || jsonBean.get(i).getCityList().get(c).getArea().size() == 0) {
+                    city_AreaList.add("");
+                } else {
+                    city_AreaList.addAll(jsonBean.get(i).getCityList().get(c).getArea());
+                }*/
+                city_AreaList.addAll(jsonBean.get(i).getCityList().get(c).getArea());
+                province_AreaList.add(city_AreaList);//添加该省所有地区数据
+            }
+
+            /**
+             * 添加城市数据
+             */
+            cityItems.add(cityList);
+
+            /**
+             * 添加地区数据
+             */
+            districtItems.add(province_AreaList);
+        }
+
+        mHandler.sendEmptyMessage(MSG_LOAD_SUCCESS);
+
+    }
+    public ArrayList<JsonBean> parseData(String result) {//Gson 解析
+        ArrayList<JsonBean> detail = new ArrayList<>();
+        try {
+            JSONArray data = new JSONArray(result);
+            Gson gson = new Gson();
+            for (int i = 0; i < data.length(); i++) {
+                JsonBean entity = gson.fromJson(data.optJSONObject(i).toString(), JsonBean.class);
+                detail.add(entity);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            mHandler.sendEmptyMessage(MSG_LOAD_FAILED);
+        }
+        return detail;
+    }
+    /********************************************************@ 省市3联动案例 end ****************************************************/
+
+    /********************************************************@ 时间选择器案例 start ****************************************************/
+
+    //时间选择器案例
+    private TimePickerView pvTime, pvCustomTime, pvCustomCalendar;
 
     /**
-     * 农历时间已扩展至 ： 1900 - 2100年
+     * @功能：自定义时间选择器----可切换农历
+     * *@必须函数：getTime(),initLunarPicker()
+     * @gradlep依赖：implementation 'com.contrarywind:Android-PickerView:4.1.8'
      */
     private void initLunarPicker() {
         Calendar selectedDate = Calendar.getInstance();//系统当前时间
@@ -152,7 +336,8 @@ public class PickerViewDemo extends BaseActivity {
     }
 
     /**
-     * @功能：自定义时间选择器
+     * @功能：自定义时间选择器布局
+     * *@必须函数：getTime(),initCustomTimePicker()
      * @gradlep依赖：implementation 'com.contrarywind:Android-PickerView:4.1.8'
      */
     private void initCustomTimePicker() {
@@ -225,17 +410,11 @@ public class PickerViewDemo extends BaseActivity {
                 .build();
     }
 
-
     /**
      * @功能：时间选择器
      * @必须函数：getTime(),initTimePicker()
      * @gradlep依赖：implementation 'com.contrarywind:Android-PickerView:4.1.8'
      */
-    private String getTime(Date date) {//可根据需要自行截取数据显示
-        Log.d("getTime()", "choice date millis: " + date.getTime());
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return format.format(date);
-    }
     private void initTimePicker() {//Dialog 模式下，在底部弹出
         pvTime = new TimePickerBuilder(this, new OnTimeSelectListener() {
             @Override
@@ -272,4 +451,143 @@ public class PickerViewDemo extends BaseActivity {
             }
         }
     }
+
+    private String getTime(Date date) {//可根据需要自行截取数据显示
+        Log.d("getTime()", "choice date millis: " + date.getTime());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return format.format(date);
+    }
+    /********************************************************@ 时间选择器案例 end ****************************************************/
+
+
+
+
+    /********************************************************@ 省市2联动案例 start ****************************************************/
+
+    //省市2联动案例
+    private OptionsPickerView pvOptions;
+    private ArrayList<ProvinceBean> options1Items = new ArrayList<>();
+    private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();
+    //private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();
+    /**
+     * @功能：省市2联动案例
+     * @必须函数：getData(),必须在初始化initOptionPicker()之前，先初始化数据
+     * @gradlep依赖：implementation 'com.contrarywind:Android-PickerView:4.1.8'
+     */
+    private void initOptionPicker() {//条件选择器初始化
+        pvOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                //返回的分别是三个级别的选中位置
+                String tx = options1Items.get(options1).getPickerViewText()
+                        + options2Items.get(options1).get(options2);
+//                         + options3Items.get(options1).get(options2).get(options3);
+                pickerProvince.setText(tx);
+            }
+        })
+                .setTitleText("城市选择")
+                .setContentTextSize(18)//设置滚轮文字大小
+                .setDividerColor(Color.RED)//设置分割线的颜色
+                .setSelectOptions(0, 0)//默认选中项
+                .setBgColor(Color.WHITE)//设置选择区域背景颜色
+                .setTitleBgColor(Color.GRAY)//设置标题栏背景颜色
+                .setTitleColor(Color.WHITE)//设置标题文字颜色
+                .setCancelColor(Color.GREEN)//设置取消按钮颜色
+                .setSubmitColor(Color.GREEN)//设置提交按钮颜色
+                .setTextColorCenter(Color.BLACK)//设置选择区文字颜色
+                .isRestoreItem(true)//切换时是否还原，设置默认选中第一项。
+                .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
+                .setLabels("省", "市", "区")
+                .setOutSideColor(0x00000000) //设置外部遮罩颜色
+                .setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
+                    @Override
+                    public void onOptionsSelectChanged(int options1, int options2, int options3) {
+                        String str = "options1: " + options1 + "\noptions2: " + options2 + "\noptions3: " + options3;
+                        Toast.makeText(PickerViewDemo.this, str, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .build();
+        pvOptions.setPicker(options1Items, options2Items);//二级选择器
+    }
+    private void loadOptionData() {
+        /**
+         * 注意：如果是添加JavaBean实体数据，则实体类需要实现 IPickerViewData 接口，
+         * PickerView会通过getPickerViewText方法获取字符串显示出来。
+         */
+        //选项1
+        options1Items.add(new ProvinceBean(0, "广东", "描述部分", "其他数据"));
+        options1Items.add(new ProvinceBean(1, "湖南", "描述部分", "其他数据"));
+        options1Items.add(new ProvinceBean(2, "广西", "描述部分", "其他数据"));
+        //选项2
+        ArrayList<String> options2Items_01 = new ArrayList<>();
+        options2Items_01.add("广州");
+        options2Items_01.add("佛山");
+        options2Items_01.add("东莞");
+        options2Items_01.add("珠海");
+        ArrayList<String> options2Items_02 = new ArrayList<>();
+        options2Items_02.add("长沙");
+        options2Items_02.add("岳阳");
+        options2Items_02.add("株洲");
+        options2Items_02.add("衡阳");
+        ArrayList<String> options2Items_03 = new ArrayList<>();
+        options2Items_03.add("桂林");
+        options2Items_03.add("玉林");
+        options2Items.add(options2Items_01);
+        options2Items.add(options2Items_02);
+        options2Items.add(options2Items_03);
+        /*--------数据源添加完毕---------*/
+    }
+    /********************************************************@ 省市2联动案例 end ****************************************************/
+
+
+
+    /********************************************************@ 不联动多级选项 start ****************************************************/
+
+    //省市联动、多级选项案例
+    private OptionsPickerView pvNoLinkOptions;
+    private ArrayList<String> food = new ArrayList<>();
+    private ArrayList<String> clothes = new ArrayList<>();
+    private ArrayList<String> computer = new ArrayList<>();
+    /**
+     * @功能：不联动多级选项
+     * @必须函数：loadNoLinkData(),必须在初始化initOptionPicker()之前，先初始化数据
+     * @gradlep依赖：implementation 'com.contrarywind:Android-PickerView:4.1.8'
+     */
+    private void initNoLinkOptionsPicker() {
+        pvNoLinkOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                String str = "food:" + food.get(options1)
+                        + "\nclothes:" + clothes.get(options2)
+                        + "\ncomputer:" + computer.get(options3);
+                Toast.makeText(PickerViewDemo.this, str, Toast.LENGTH_SHORT).show();
+            }
+        }).setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
+            @Override
+            public void onOptionsSelectChanged(int options1, int options2, int options3) {
+                String str = "options1: " + options1 + "\noptions2: " + options2 + "\noptions3: " + options3;
+                Toast.makeText(PickerViewDemo.this, str, Toast.LENGTH_SHORT).show();
+            }
+        })
+                .setSelectOptions(0, 0, 0)
+                .build();
+        pvNoLinkOptions.setNPicker(food, clothes, computer);
+    }
+
+    private void loadNoLinkData() {
+        food.add("KFC");
+        food.add("MacDonald");
+        food.add("Pizza hut");
+
+        clothes.add("Nike");
+        clothes.add("Adidas");
+        clothes.add("Armani");
+
+        computer.add("ASUS");
+        computer.add("Lenovo");
+        computer.add("Apple");
+        computer.add("HP");
+    }
+
+    /********************************************************@ 不联动多级选项 end ****************************************************/
 }
