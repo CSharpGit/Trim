@@ -20,7 +20,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.CalculatorActivity"/>
-        <activity android:name=".PickerViewDemo"/>
         <activity android:name=".activity.ReserveActivity"/>
         <activity android:name=".activity.DesignerListActivity"/>
         <activity android:name=".activity.TrimSceneActivity"/>

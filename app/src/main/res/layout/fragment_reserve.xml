@@ -18,6 +18,7 @@
             android:layout_marginEnd="15dp"
             android:orientation="vertical">
             <EditText
+                android:id="@+id/input_name"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:gravity="center_vertical"
@@ -28,12 +29,14 @@
                 android:textSize="@dimen/textStandard"
                 android:hint="您的姓名"/>
             <EditText
+                android:id="@+id/input_phone_number"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
                 android:textColor="@color/textPrimary"
                 android:paddingStart="5dp"
+                android:inputType="phone"
                 android:background="@drawable/corner_border_gray"
                 android:textSize="@dimen/textStandard"
                 android:hint="您的电话"/>
@@ -57,7 +60,16 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="\u3000\u3000公司简介"
+            android:text="\u3000\u3000我们用智慧、技能与真诚打造精品，把用户的愿望变为美好的现实"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textSize="@dimen/textStandard"
+            android:textColor="@color/textGray"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="\u3000\u3000公司本着“崇尚自由，追求完美”的设计理念，凭借超前的设计构思、合理的预算报价、精良的施工工艺，优质的全程服务，真诚的为每一位顾客，量身定制全新、优雅、舒适的居家生活、文化空间。"
             android:layout_marginTop="20dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"

@@ -4,7 +4,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,7 +20,6 @@ import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.google.gson.Gson;
 import com.quan.fems.trim.GetJsonDataUtil;
 import com.quan.fems.trim.JsonBean;
-import com.quan.fems.trim.PickerViewDemo;
 import com.quan.fems.trim.R;
 import com.quan.fems.trim.base.BaseActivity;
 
@@ -24,10 +27,12 @@ import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class CalculatorActivity extends BaseActivity {
     private ImageView backView;
-    private TextView titleName, chooseCity, chooseHouseType;
+    private TextView titleName, chooseCity, chooseHouseType,makeRandom,sendMessage;
+    EditText areaInput,phoneNumberInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +48,10 @@ public class CalculatorActivity extends BaseActivity {
         titleName = findViewById(R.id.title_name);
         chooseCity = findViewById(R.id.choose_city);
         chooseHouseType = findViewById(R.id.choose_house_type);
+        makeRandom = findViewById(R.id.random_text);
+        sendMessage = findViewById(R.id.send_mess);
+        areaInput=findViewById(R.id.input_area);
+        phoneNumberInput=findViewById(R.id.input_phone_number);
         mHandler.sendEmptyMessage(MSG_LOAD_DATA);
     }
 
@@ -50,6 +59,7 @@ public class CalculatorActivity extends BaseActivity {
         titleName.setText("识尚装饰");
         loadNoLinkData();
         initNoLinkOptionsPicker();
+        handler.postDelayed(runnable,TIME);
     }
 
     private void initEvent() {
@@ -75,7 +85,78 @@ public class CalculatorActivity extends BaseActivity {
                 pvNoLinkOptions.show();
             }
         });
+        sendMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (judInput()){
+                    Toast.makeText(CalculatorActivity.this, "您的装修预算信息已发送自您的手机，请注意查收！", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        areaInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int length=s.toString().length();
+                if (length>=4){
+                    Toast.makeText(CalculatorActivity.this, "房屋面积限制在1000平米以内", Toast.LENGTH_SHORT).show();
+                    areaInput.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
+
+    private boolean judInput(){
+        if (TextUtils.isEmpty(areaInput.getText().toString().trim())) {
+            Toast.makeText(CalculatorActivity.this, "请输入房屋面积", Toast.LENGTH_SHORT).show();
+            areaInput.requestFocus();
+            return false;
+        }
+        if (TextUtils.isEmpty(phoneNumberInput.getText().toString().trim())) {
+            Toast.makeText(CalculatorActivity.this, "请输入您的电话号码", Toast.LENGTH_LONG).show();
+            phoneNumberInput.requestFocus();
+            return false;
+        } else if (phoneNumberInput.getText().toString().trim().length() != 11) {
+            Toast.makeText(CalculatorActivity.this, "您的电话号码位数不正确", Toast.LENGTH_LONG).show();
+            phoneNumberInput.requestFocus();
+            return false;
+        } else {
+            String phone_number = phoneNumberInput.getText().toString().trim();
+            String num = "[1][358]\\d{9}";
+            if (phone_number.matches(num)) return true;
+            else {
+                Toast.makeText(CalculatorActivity.this, "请输入正确的手机号码", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+    }
+
+    /**@每隔1秒产生一个随机数*/
+    private int TIME = 1000;//每隔1秒执行一次.
+    Handler handler = new Handler();
+    public Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                handler.postDelayed(this, TIME);
+                Random ra =new Random();
+                int randNum=ra.nextInt(100000);
+                makeRandom.setText(""+randNum);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
 
     /********************************************************@ 省市3联动案例 start ****************************************************/
 
@@ -245,6 +326,8 @@ public class CalculatorActivity extends BaseActivity {
             }
         })
                 .setSelectOptions(0, 0, 0)
+                .setCancelColor(Color.GREEN)
+                .setSubmitColor(Color.GREEN)
                 .build();
         pvNoLinkOptions.setNPicker(bedRoom, livingRoom, kikRoom);
     }
