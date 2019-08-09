@@ -8,11 +8,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.quan.fems.trim.R;
 import com.quan.fems.trim.base.BaseActivity;
+import com.quan.fems.trim.server.Commons;
 
 public class ReserveActivity extends BaseActivity {
-    private ImageView backView;
+    private ImageView backView,mImgView;
     private TextView titleName,messSub;
     private EditText nameInput,phoneNumberInput;
 
@@ -27,6 +29,7 @@ public class ReserveActivity extends BaseActivity {
 
     private void initView() {
         backView = findViewById(R.id.back_view);
+        mImgView = findViewById(R.id.img_view);
         titleName = findViewById(R.id.title_name);
         messSub = findViewById(R.id.mess_sub);
         nameInput = findViewById(R.id.input_name);
@@ -35,6 +38,7 @@ public class ReserveActivity extends BaseActivity {
 
     private void initData() {
         titleName.setText("识尚装饰");
+        ImageLoader.getInstance().displayImage(Commons.WEB_URL+Commons.IMG_DIR+"banner_3.jpg",mImgView,options,mImageLoadingListener);
     }
 
     private void initEvent() {

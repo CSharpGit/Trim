@@ -6,16 +6,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.quan.fems.trim.R;
 import com.quan.fems.trim.base.BaseFragment;
+import com.quan.fems.trim.server.Commons;
 
 public class ReserveFragment extends BaseFragment{
     private View view = null;
     private TextView messSub;
     private EditText nameInput,phoneNumberInput;
+    private ImageView mImgView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -26,11 +30,13 @@ public class ReserveFragment extends BaseFragment{
         return view;
     }
     private void initView(){
+        mImgView = view.findViewById(R.id.img_view);
         messSub=view.findViewById(R.id.mess_sub);
         nameInput = view.findViewById(R.id.input_name);
         phoneNumberInput = view.findViewById(R.id.input_phone_number);
     }
     private void initData(){
+        ImageLoader.getInstance().displayImage(Commons.WEB_URL+Commons.IMG_DIR+"banner_3.jpg",mImgView,options,mImageLoadingListener);
     }
 
     private void initEvent() {
