@@ -4,12 +4,13 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
-    <color name="appTheme">#fe9900</color>
+    <color name="appTheme">#33bd82</color>
+    <color name="appTheme2">#fe9900</color>
     <color name="textPrimary">#111111</color>
     <color name="textSelected">#33bd82</color>
     <color name="textGray">#8c8c8c</color>
     <color name="textTitle">#222222</color>
-    <color name="backgroundPrimary">#0099ff</color>
+    <color name="backgroundPrimary">#33bd82</color>
     <color name="white">#ffffff</color>
     <color name="grayBackground">#efefef</color>
 </resources>
