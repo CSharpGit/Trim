@@ -1,4 +1,4 @@
-package com.quan.fems.trim;
+package com.quan.fems.trim.untils;
 
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;

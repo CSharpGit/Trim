@@ -1,4 +1,4 @@
-package com.quan.fems.trim;
+package com.quan.fems.trim.untils;
 import com.contrarywind.interfaces.IPickerViewData;
 import java.util.List;
 public class JsonBean implements IPickerViewData {

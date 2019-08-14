@@ -18,8 +18,8 @@ import com.bigkoo.pickerview.listener.OnOptionsSelectChangeListener;
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.google.gson.Gson;
-import com.quan.fems.trim.GetJsonDataUtil;
-import com.quan.fems.trim.JsonBean;
+import com.quan.fems.trim.untils.GetJsonDataUtil;
+import com.quan.fems.trim.untils.JsonBean;
 import com.quan.fems.trim.R;
 import com.quan.fems.trim.base.BaseActivity;
 

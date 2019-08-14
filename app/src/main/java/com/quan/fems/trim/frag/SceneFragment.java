@@ -2,6 +2,7 @@ package com.quan.fems.trim.frag;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -17,6 +18,12 @@ import com.quan.fems.trim.server.AsyncHttpCient;
 import com.quan.fems.trim.server.Commons;
 import com.quan.fems.trim.server.HttpListener;
 import com.quan.fems.trim.server.HttpParam;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
+import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
+import com.scwang.smartrefresh.layout.header.BezierRadarHeader;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SceneFragment extends BaseFragment{
+    private RefreshLayout refreshLayout;
     private RecyclerView mRecyclerView;
     private TrimSceneAdapter mAdapter;
     private List<TrimSceneBean> listData;
@@ -40,6 +48,19 @@ public class SceneFragment extends BaseFragment{
     }
 
     private void initEvent() {
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                initData();
+                refreshLayout.finishRefresh(1000);
+            }
+        });
+        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                refreshLayout.finishLoadMore(1000);
+            }
+        });
         mAdapter.setOnItemClickListener(new TrimSceneAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position,List<TrimSceneBean> list) {
@@ -56,11 +77,22 @@ public class SceneFragment extends BaseFragment{
     }
 
     private void initView(){
+        refreshLayout=view.findViewById(R.id.refreshLayout);
+        initRefreshView();
         initRecyclerView();
     }
     private void initData(){
         loadRecycleData();
         mAdapter.notifyDataSetChanged();
+    }
+
+    private void initRefreshView() {
+        //设置 Header 为 贝塞尔雷达 样式
+        refreshLayout.setRefreshHeader(new BezierRadarHeader(getActivity()));
+        //设置 Footer 为 球脉冲 样式
+        refreshLayout.setRefreshFooter(new BallPulseFooter(getActivity()).setSpinnerStyle(SpinnerStyle.Scale));
+
+        refreshLayout.setPrimaryColorsId(R.color.appTheme, android.R.color.white);
     }
 
     private void loadRecycleData() {

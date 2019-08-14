@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +21,6 @@ import com.quan.fems.trim.activity.DesignerDetailActivity;
 import com.quan.fems.trim.activity.DesignerListActivity;
 import com.quan.fems.trim.activity.ReserveActivity;
 import com.quan.fems.trim.activity.TrimSceneActivity;
-import com.quan.fems.trim.activity.TrimSceneDetailActivity;
 import com.quan.fems.trim.adapter.HomeDesignerAdapter;
 import com.quan.fems.trim.adapter.HomeIconAdapter;
 import com.quan.fems.trim.adapter.HomeTrimSceneAdapter;
@@ -35,6 +35,14 @@ import com.quan.fems.trim.server.AsyncHttpCient;
 import com.quan.fems.trim.server.Commons;
 import com.quan.fems.trim.server.HttpListener;
 import com.quan.fems.trim.server.HttpParam;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
+import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
+import com.scwang.smartrefresh.layout.header.BezierRadarHeader;
+import com.scwang.smartrefresh.layout.header.ClassicsHeader;
+import com.scwang.smartrefresh.layout.header.TwoLevelHeader;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,6 +55,7 @@ import java.util.concurrent.TimeUnit;
 
 public class HomeFragment extends BaseFragment{
     private View view = null;
+    private RefreshLayout refreshLayout;
     private ConstraintLayout toDesignerList,toTrimScene;
     private RecyclerView mHomeIconRecyclerView,mHomeDesignerRecyclerView,mHomeTrimSceneRecyclerView;
     private HomeIconAdapter mHomeIconAdapter;
@@ -58,7 +67,7 @@ public class HomeFragment extends BaseFragment{
     private int currentItem=0;
     private ScheduledExecutorService scheduledExecutorService;
 
-    private List<SlideBean> bannerListBean;
+    private List<SlideBean> bannerListBean=new ArrayList<>();
     private List<HomeIconBean> iconListBean;
     private List<DesignerBean> designerListBean;
     private List<HomeTrimSceneBean> sceneListBean;
@@ -74,124 +83,36 @@ public class HomeFragment extends BaseFragment{
     }
 
     private void initView(){
+        refreshLayout=view.findViewById(R.id.refreshLayout);
         mViewPager = view.findViewById(R.id.viewPager);
         slide = view.findViewById(R.id.banner_slide);
         toDesignerList=view.findViewById(R.id.to_designer_list);
         toTrimScene=view.findViewById(R.id.to_trim_scene);
+        initRefreshView();
         initIconRecyclerView();
         initDesignerRecyclerView();
         initTrimSceneRecyclerView();
     }
-
     private void initData(){
-        bannerListBean =new ArrayList<>();
-        slide_list = new ImageView[4];
         loadBannerData();
         loadIconData();
         loadDesignerData();
         loadTrimSceneData();
     }
-
-    private void loadTrimSceneData() {
-        AsyncHttpCient hndl = new AsyncHttpCient();
-        HttpParam prm = new HttpParam();
-        prm.httpListener = trimSceneHttpListener;
-        prm.url = Commons.HOMETRIMSCENE;
-        hndl.execute(prm);
-    }
-
-    private HttpListener trimSceneHttpListener = new HttpListener() {
-        @Override
-        public void onPostData(String data) {
-            try {
-                JSONObject jsn = new JSONObject(data);
-                sceneListBean.clear();
-                if(jsn.getInt("errcode")==0){
-                    JSONArray dd = jsn.getJSONArray("data");
-                    for (int i=0;i<dd.length();i++){
-                        JSONObject jsnList=dd.getJSONObject(i);
-                        HomeTrimSceneBean htsb = new HomeTrimSceneBean();
-                        htsb.id=jsnList.getInt("_id");
-                        htsb.imgurl=jsnList.getString("img");
-                        htsb.styleLabel=jsnList.getString("style");
-                        htsb.styleCount=dd.length();
-                        sceneListBean.add(htsb);
-                    }
-                    mHomeTrimSceneAdapter.notifyDataSetChanged();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
-    private void loadIconData() {
-        AsyncHttpCient hndl = new AsyncHttpCient();
-        HttpParam prm = new HttpParam();
-        prm.httpListener = iconHttpListener;
-        prm.url = Commons.ICON;
-        hndl.execute(prm);
-    }
-
-    private void loadDesignerData() {
-        AsyncHttpCient hndl = new AsyncHttpCient();
-        HttpParam prm = new HttpParam();
-        prm.httpListener = designerHttpListener;
-        prm.url = Commons.HOMEDESIGNER;
-        hndl.execute(prm);
-    }
-
-    private HttpListener designerHttpListener = new HttpListener() {
-        @Override
-        public void onPostData(String data) {
-            try {
-                JSONObject jsn = new JSONObject(data);
-                designerListBean.clear();
-                if(jsn.getInt("errcode")==0){
-                    JSONArray dd = jsn.getJSONArray("data");
-                    for (int i=0;i<dd.length();i++){
-                        JSONObject jsnList=dd.getJSONObject(i);
-                        DesignerBean hdb = new DesignerBean();
-                        hdb.id=jsnList.getInt("_id");
-                        hdb.imgurl=jsnList.getString("img");
-                        hdb.dName=jsnList.getString("name");
-                        hdb.posit=jsnList.getString("posit");
-                        hdb.tel=jsnList.getString("tel");
-                        designerListBean.add(hdb);
-                    }
-                    mHomeDesignerAdapter.notifyDataSetChanged();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
-    private HttpListener iconHttpListener = new HttpListener() {
-        @Override
-        public void onPostData(String data) {
-            try {
-                JSONObject jsn = new JSONObject(data);
-                iconListBean.clear();
-                if(jsn.getInt("errcode")==0){
-                    JSONArray dd = jsn.getJSONArray("data");
-                    for (int i=0;i<dd.length();i++){
-                        JSONObject jsnList=dd.getJSONObject(i);
-                        HomeIconBean hib = new HomeIconBean();
-                        hib.id=jsnList.getInt("_id");
-                        hib.imgurl=jsnList.getString("img");
-                        hib.titleName=jsnList.getString("titleName");
-                        iconListBean.add(hib);
-                    }
-                    mHomeIconAdapter.notifyDataSetChanged();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
     private void initEvent() {
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                initData();
+                refreshLayout.finishRefresh(1000);
+            }
+        });
+        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                refreshLayout.finishLoadMore(1000);
+            }
+        });
         mHomeIconAdapter.setOnItemClickListener(new HomeIconAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -263,6 +184,136 @@ public class HomeFragment extends BaseFragment{
         });
     }
 
+    private void initRefreshView() {
+        //设置 Header 为 贝塞尔雷达 样式
+        refreshLayout.setRefreshHeader(new BezierRadarHeader(getActivity()));
+        //设置 Footer 为 球脉冲 样式
+        refreshLayout.setRefreshFooter(new BallPulseFooter(getActivity()).setSpinnerStyle(SpinnerStyle.Scale));
+
+        refreshLayout.setPrimaryColorsId(R.color.appTheme, android.R.color.white);
+    }
+    private void initIconRecyclerView() {
+        mHomeIconRecyclerView=view.findViewById(R.id.recycler_view_icon);
+        iconListBean =new ArrayList<>();
+        mHomeIconAdapter=new HomeIconAdapter(iconListBean);
+        StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(4,StaggeredGridLayoutManager.VERTICAL);
+        mHomeIconRecyclerView.setLayoutManager(staggered);
+        mHomeIconRecyclerView.setAdapter(mHomeIconAdapter);
+    }
+    private void initDesignerRecyclerView() {
+        mHomeDesignerRecyclerView=view.findViewById(R.id.recycler_view_designer);
+        designerListBean=new ArrayList<>();
+        mHomeDesignerAdapter=new HomeDesignerAdapter(designerListBean);
+        StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.HORIZONTAL);
+        mHomeDesignerRecyclerView.setLayoutManager(staggered);
+        mHomeDesignerRecyclerView.setAdapter(mHomeDesignerAdapter);
+    }
+    private void initTrimSceneRecyclerView() {
+        mHomeTrimSceneRecyclerView=view.findViewById(R.id.recycler_view_trim_scene);
+        sceneListBean=new ArrayList<>();
+        mHomeTrimSceneAdapter=new HomeTrimSceneAdapter(sceneListBean);
+        StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.HORIZONTAL);
+        mHomeTrimSceneRecyclerView.setLayoutManager(staggered);
+        mHomeTrimSceneRecyclerView.setAdapter(mHomeTrimSceneAdapter);
+    }
+
+    private void loadIconData() {
+        AsyncHttpCient hndl = new AsyncHttpCient();
+        HttpParam prm = new HttpParam();
+        prm.httpListener = iconHttpListener;
+        prm.url = Commons.ICON;
+        hndl.execute(prm);
+    }
+    private void loadDesignerData() {
+        AsyncHttpCient hndl = new AsyncHttpCient();
+        HttpParam prm = new HttpParam();
+        prm.httpListener = designerHttpListener;
+        prm.url = Commons.HOMEDESIGNER;
+        hndl.execute(prm);
+    }
+    private void loadTrimSceneData() {
+        AsyncHttpCient hndl = new AsyncHttpCient();
+        HttpParam prm = new HttpParam();
+        prm.httpListener = trimSceneHttpListener;
+        prm.url = Commons.HOMETRIMSCENE;
+        hndl.execute(prm);
+    }
+
+    private HttpListener iconHttpListener = new HttpListener() {
+        @Override
+        public void onPostData(String data) {
+            try {
+                JSONObject jsn = new JSONObject(data);
+                iconListBean.clear();
+                if(jsn.getInt("errcode")==0){
+                    JSONArray dd = jsn.getJSONArray("data");
+                    for (int i=0;i<dd.length();i++){
+                        JSONObject jsnList=dd.getJSONObject(i);
+                        HomeIconBean hib = new HomeIconBean();
+                        hib.id=jsnList.getInt("_id");
+                        hib.imgurl=jsnList.getString("img");
+                        hib.titleName=jsnList.getString("titleName");
+                        iconListBean.add(hib);
+                    }
+                    mHomeIconAdapter.notifyDataSetChanged();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private HttpListener designerHttpListener = new HttpListener() {
+        @Override
+        public void onPostData(String data) {
+            try {
+                JSONObject jsn = new JSONObject(data);
+                designerListBean.clear();
+                if(jsn.getInt("errcode")==0){
+                    JSONArray dd = jsn.getJSONArray("data");
+                    for (int i=0;i<dd.length();i++){
+                        JSONObject jsnList=dd.getJSONObject(i);
+                        DesignerBean hdb = new DesignerBean();
+                        hdb.id=jsnList.getInt("_id");
+                        hdb.imgurl=jsnList.getString("img");
+                        hdb.dName=jsnList.getString("name");
+                        hdb.posit=jsnList.getString("posit");
+                        hdb.tel=jsnList.getString("tel");
+                        designerListBean.add(hdb);
+                    }
+                    mHomeDesignerAdapter.notifyDataSetChanged();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private HttpListener trimSceneHttpListener = new HttpListener() {
+        @Override
+        public void onPostData(String data) {
+            try {
+                JSONObject jsn = new JSONObject(data);
+                sceneListBean.clear();
+                if(jsn.getInt("errcode")==0){
+                    JSONArray dd = jsn.getJSONArray("data");
+                    for (int i=0;i<dd.length();i++){
+                        JSONObject jsnList=dd.getJSONObject(i);
+                        HomeTrimSceneBean htsb = new HomeTrimSceneBean();
+                        htsb.id=jsnList.getInt("_id");
+                        htsb.imgurl=jsnList.getString("img");
+                        htsb.styleLabel=jsnList.getString("style");
+                        htsb.styleCount=dd.length();
+                        sceneListBean.add(htsb);
+                    }
+                    mHomeTrimSceneAdapter.notifyDataSetChanged();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
     public void callPhone(String str) {
         Intent intent=new Intent();
         intent.setAction(Intent.ACTION_DIAL);
@@ -285,6 +336,8 @@ public class HomeFragment extends BaseFragment{
                 bannerListBean.clear();
                 if(jsn.getInt("errcode")==0){
                     JSONArray dd = jsn.getJSONArray("data");
+                    deleteAllView(slide);
+                    slide_list = new ImageView[dd.length()];
                     for (int i=0;i<dd.length();i++){
                         JSONObject jsnList=dd.getJSONObject(i);
                         SlideBean sb = new SlideBean();
@@ -313,32 +366,15 @@ public class HomeFragment extends BaseFragment{
         }
     };
 
-    private void initIconRecyclerView() {
-        mHomeIconRecyclerView=view.findViewById(R.id.recycler_view_icon);
-        iconListBean =new ArrayList<>();
-        mHomeIconAdapter=new HomeIconAdapter(iconListBean);
-        StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(4,StaggeredGridLayoutManager.VERTICAL);
-        mHomeIconRecyclerView.setLayoutManager(staggered);
-        mHomeIconRecyclerView.setAdapter(mHomeIconAdapter);
+    private void deleteAllView(ViewGroup vg){
+        int size = vg.getChildCount();
+        if (size>0){
+            for( int i = 0; i < size; i++){
+                vg.removeViewAt(i);
+            }
+        }
     }
 
-    private void initDesignerRecyclerView() {
-        mHomeDesignerRecyclerView=view.findViewById(R.id.recycler_view_designer);
-        designerListBean=new ArrayList<>();
-        mHomeDesignerAdapter=new HomeDesignerAdapter(designerListBean);
-        StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.HORIZONTAL);
-        mHomeDesignerRecyclerView.setLayoutManager(staggered);
-        mHomeDesignerRecyclerView.setAdapter(mHomeDesignerAdapter);
-    }
-
-    private void initTrimSceneRecyclerView() {
-        mHomeTrimSceneRecyclerView=view.findViewById(R.id.recycler_view_trim_scene);
-        sceneListBean=new ArrayList<>();
-        mHomeTrimSceneAdapter=new HomeTrimSceneAdapter(sceneListBean);
-        StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.HORIZONTAL);
-        mHomeTrimSceneRecyclerView.setLayoutManager(staggered);
-        mHomeTrimSceneRecyclerView.setAdapter(mHomeTrimSceneAdapter);
-    }
     private class MyPageChangeListener implements ViewPager.OnPageChangeListener {
         public void onPageSelected(int position) {
             for (int i = 0; i < slide_list.length; i++) {
