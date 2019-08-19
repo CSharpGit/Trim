@@ -39,8 +39,6 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
 import com.scwang.smartrefresh.layout.header.BezierRadarHeader;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.header.TwoLevelHeader;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
@@ -52,6 +50,8 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static com.quan.fems.trim.untils.ScreenInfoUtils.*;
 
 public class HomeFragment extends BaseFragment{
     private View view = null;
@@ -67,7 +67,7 @@ public class HomeFragment extends BaseFragment{
     private int currentItem=0;
     private ScheduledExecutorService scheduledExecutorService;
 
-    private List<SlideBean> bannerListBean=new ArrayList<>();
+    private ArrayList<SlideBean> bannerListBean=new ArrayList<>();
     private List<HomeIconBean> iconListBean;
     private List<DesignerBean> designerListBean;
     private List<HomeTrimSceneBean> sceneListBean;
@@ -88,11 +88,13 @@ public class HomeFragment extends BaseFragment{
         slide = view.findViewById(R.id.banner_slide);
         toDesignerList=view.findViewById(R.id.to_designer_list);
         toTrimScene=view.findViewById(R.id.to_trim_scene);
+        initBannerView();
         initRefreshView();
         initIconRecyclerView();
         initDesignerRecyclerView();
         initTrimSceneRecyclerView();
     }
+
     private void initData(){
         loadBannerData();
         loadIconData();
@@ -182,6 +184,13 @@ public class HomeFragment extends BaseFragment{
                 getActivity().startActivity(intent);
             }
         });
+    }
+
+    private void initBannerView() {
+        ViewGroup.LayoutParams bannerParm = mViewPager.getLayoutParams();
+        bannerParm.width = getScreenWidth(getActivity());
+        bannerParm.height = bannerParm.width / 2;
+        mViewPager.setLayoutParams(bannerParm);
     }
 
     private void initRefreshView() {

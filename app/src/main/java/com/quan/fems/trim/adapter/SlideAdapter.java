@@ -25,10 +25,10 @@ import java.util.List;
 
 public class SlideAdapter extends PagerAdapter {
     protected ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
-    private List<SlideBean> listData;
+    private ArrayList<SlideBean> listData;
     private Context mContext;
     protected DisplayImageOptions options;
-    public SlideAdapter(Context context, List<SlideBean> listData){
+    public SlideAdapter(Context context, ArrayList<SlideBean> listData){
         this.listData=listData;
         this.mContext =context;
         options = new DisplayImageOptions.Builder()

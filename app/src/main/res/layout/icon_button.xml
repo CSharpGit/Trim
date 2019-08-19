@@ -22,7 +22,7 @@
         android:id="@+id/name_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/textStandard"
+        android:textSize="@dimen/textSubStandard"
         android:textColor="@color/textPrimary"
         android:layout_marginTop="10dp"
         android:text="标题名称"/>
