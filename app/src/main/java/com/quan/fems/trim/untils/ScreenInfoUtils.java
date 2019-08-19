@@ -124,14 +124,14 @@ public class ScreenInfoUtils {
     /**
      * 获取屏幕密度比例，1dip显示的像素点
      */
-    private static float getDensity(Context context) {
+    public static float getDensity(Context context) {
         return getDisplayMetrics(context).density;
     }
 
     /**
      * 获取屏幕密度
      */
-    private static int getDpi(Context context) {
+    public static int getDpi(Context context) {
         return getDisplayMetrics(context).densityDpi;
     }
 

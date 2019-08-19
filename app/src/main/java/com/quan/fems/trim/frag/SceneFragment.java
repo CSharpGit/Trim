@@ -35,7 +35,7 @@ public class SceneFragment extends BaseFragment{
     private RefreshLayout refreshLayout;
     private RecyclerView mRecyclerView;
     private TrimSceneAdapter mAdapter;
-    private List<TrimSceneBean> listData;
+    private ArrayList<TrimSceneBean> listData;
     private View view = null;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -79,7 +79,7 @@ public class SceneFragment extends BaseFragment{
     private void initView(){
         refreshLayout=view.findViewById(R.id.refreshLayout);
         initRefreshView();
-        initRecyclerView();
+        initRecyclerView(2);
     }
     private void initData(){
         loadRecycleData();
@@ -128,11 +128,11 @@ public class SceneFragment extends BaseFragment{
         }
     };
 
-    private void initRecyclerView() {
+    private void initRecyclerView(int colCount) {
         mRecyclerView=view.findViewById(R.id.recycler_view);
         listData=new ArrayList<>();
-        mAdapter=new TrimSceneAdapter(listData);
-        StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        mAdapter=new TrimSceneAdapter(getActivity(),listData,colCount);
+        StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(colCount,StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(staggered);
         mRecyclerView.setAdapter(mAdapter);
     }

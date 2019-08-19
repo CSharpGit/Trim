@@ -1,5 +1,6 @@
 package com.quan.fems.trim.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,15 +15,24 @@ import com.quan.fems.trim.R;
 import com.quan.fems.trim.bean.TrimSceneBean;
 import com.quan.fems.trim.server.Commons;
 import com.quan.fems.trim.untils.ImageDisplayListener;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.quan.fems.trim.untils.ScreenInfoUtils.getDensity;
+import static com.quan.fems.trim.untils.ScreenInfoUtils.getScreenWidth;
 
 public class TrimSceneAdapter extends RecyclerView.Adapter<TrimSceneAdapter.ViewHolder> {
     protected DisplayImageOptions options=null;
     protected ImageLoadingListener mImageLoadingListener=new ImageDisplayListener();
-    private List<TrimSceneBean> list;
+    private Context mContext;
+    private int colCount;
+    private ArrayList<TrimSceneBean> list;
     private OnItemClickListener mOnItemClickListener;
-    public TrimSceneAdapter(List<TrimSceneBean> list) {
+    public TrimSceneAdapter(Context mContext,ArrayList<TrimSceneBean> list,int colCount) {
+        this.mContext = mContext;
         this.list = list;
+        this.colCount = colCount;
     }
     public void setOnItemClickListener(OnItemClickListener mOnItemClickListener)
     {
@@ -69,6 +79,10 @@ public class TrimSceneAdapter extends RecyclerView.Adapter<TrimSceneAdapter.View
             mTrimStyle = itemView.findViewById(R.id.trim_scene_style_text);
             mTrimSceneDes = itemView.findViewById(R.id.trim_scene_descrip_text);
             mImg = itemView.findViewById(R.id.img_view);
+            ViewGroup.LayoutParams imgParam=mImg.getLayoutParams();
+            imgParam.width=(int)(getScreenWidth(mContext)/colCount/1.36);
+            imgParam.height=(int)(imgParam.width*1.2);
+            mImg.setLayoutParams(imgParam);
         }
     }
     public interface OnItemClickListener

@@ -37,7 +37,7 @@ public class TrimSceneActivity extends BaseActivity {
     private TextView titleName;
     private RecyclerView mRecyclerView;
     private TrimSceneAdapter mAdapter;
-    private List<TrimSceneBean> listData;
+    private ArrayList<TrimSceneBean> listData;
     private Intent intent=null;
     private String getParam;
 
@@ -56,7 +56,7 @@ public class TrimSceneActivity extends BaseActivity {
         initRefreshView();
         titleName = findViewById(R.id.title_name);
         titleName.setText("识尚装饰");
-        initRecyclerView();
+        initRecyclerView(2);
     }
 
     private void initRefreshView() {
@@ -68,11 +68,11 @@ public class TrimSceneActivity extends BaseActivity {
         refreshLayout.setPrimaryColorsId(R.color.appTheme, android.R.color.white);
     }
 
-    private void initRecyclerView() {
+    private void initRecyclerView(int colCount) {
         mRecyclerView=findViewById(R.id.recycler_view);
         listData=new ArrayList<>();
-        mAdapter=new TrimSceneAdapter(listData);
-        StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        mAdapter=new TrimSceneAdapter(TrimSceneActivity.this,listData,colCount);
+        StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(colCount,StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(staggered);
         mRecyclerView.setAdapter(mAdapter);
     }

@@ -59,7 +59,7 @@ public class TrimSceneDetailActivity extends BaseActivity {
     private void initRecyclerView() {
         mRecyclerView=findViewById(R.id.recycler_view);
         listData=new ArrayList<>();
-        mAdapter=new TrimeSceneDetailAdapter(listData);
+        mAdapter=new TrimeSceneDetailAdapter(TrimSceneDetailActivity.this,listData);
         StaggeredGridLayoutManager staggered=new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(staggered);
         mRecyclerView.setAdapter(mAdapter);
